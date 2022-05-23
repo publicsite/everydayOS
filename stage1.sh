@@ -24,7 +24,7 @@ cd $(dirname $(realpath $0))
 thepwd="${PWD}"
 
 ISONAME="devuan_chimaera_4.0.0_i386_minimal-live.iso"
-#wget "http://mirror.alpix.eu/devuan/devuan_chimaera/minimal-live/${ISONAME}"
+wget "http://mirror.alpix.eu/devuan/devuan_chimaera/minimal-live/${ISONAME}"
 mkdir "${thepwd}/mountpoint"
 sudo mount -o loop "${ISONAME}" "${thepwd}/mountpoint"
 cp -a "${thepwd}/mountpoint/live/filesystem.squashfs" .

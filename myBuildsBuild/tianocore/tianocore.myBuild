@@ -1,0 +1,121 @@
+#!/bin/sh
+actualname="edk2"
+actualname2="brotli"
+version="master"
+filename="${actualname}-${version}"
+filename2="${actualname2}-${version}"
+extension=".tar.gz"
+source="https://github.com/tianocore/edk2/archive/refs/heads/master${extension}"
+source2="https://github.com/google/brotli/archive/refs/heads/master${extension}"
+sumUrl=""
+
+#functions
+
+do_get(){
+	"${myBuildHelpersDir}"/myBuildGet.sh "${source}" "${myBuildSourceDest}"
+	mv "${myBuildSourceDest}/master${extension}" "${myBuildSourceDest}/${filename}${extension}"
+	"${myBuildHelpersDir}"/myBuildGet.sh "${source2}" "${myBuildSourceDest}"
+	mv "${myBuildSourceDest}/master${extension}" "${myBuildSourceDest}/${filename2}${extension}"
+
+	return "$?"
+}
+
+do_extract(){
+	"${myBuildHelpersDir}"/myBuildExtract.sh "${myBuildSourceDest}/${filename}${extension}" "${myBuildExtractDest}"
+	"${myBuildHelpersDir}"/myBuildExtract.sh "${myBuildSourceDest}/${filename2}${extension}" "${myBuildExtractDest}"
+	cp -a "${myBuildExtractDest}/${filename2}/"* "${myBuildExtractDest}/${filename}/BaseTools/Source/C/BrotliCompress/brotli"
+	mv "${myBuildExtractDest}/${filename2}/"* "${myBuildExtractDest}/${filename}/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli"
+	rmdir "${myBuildExtractDest}/${filename2}"
+	return "$?"
+}
+
+
+do_build(){
+#here you put commands like configure and make
+
+cd "${myBuildExtractDest}/${filename}"
+
+sed -i "s#\$(BUILD_CPPFLAGS)#\$(BUILD_CPPFLAGS) -Wno-error=int-to-pointer-cast -Wno-error=pointer-to-int-cast#g" BaseTools/Source/C/Makefiles/footer.makefile
+
+make -C BaseTools
+
+export EDK_TOOLS_PATH="${myBuildExtractDest}/${filename}/BaseTools"
+
+sed -i "s#function ##g" edksetup.sh
+sed -i "s#\${BASH_SOURCE\[0\]} -ef ./\$SCRIPTNAME#-f \$PWD/\${SCRIPTNAME}#g" edksetup.sh
+sed -i "s?\${python##\*python}?\$(echo \$python | tr -cd [0-9.] || true)?g" edksetup.sh
+sed -i "s#python=\$(echo \$python | grep \"\[\[:digit:\]\]\$\" || true)##g" edksetup.sh
+sed -i "s#\[ \"\$origin_version\" < \"\$python_version\" \]# \"\$(echo \"\$origin_version < \$python_version\" | bc)\" != 1 #g" edksetup.sh
+sed -i "s?I=\$#?I=0?g" edksetup.sh
+sed -i "s#\[ \$PYTHON3_ENABLE \] \&\& \[ \$PYTHON3_ENABLE == TRUE \]#\[ \"\$PYTHON3_ENABLE\" = \"TRUE\" \]#g" edksetup.sh
+
+sed -i "s?\${UNAME_DIRNAME// /-}?\"\$(echo \$UNAME_DIRNAME | sed \"s# #-#g\")\"?g" BaseTools/BuildEnv
+sed -i "s?\${UNAME_DIRNAME//\\\//-}?\"\$(echo \$UNAME_DIRNAME | sed \"s#\\\\\\\#-#g\")\"?g" BaseTools/BuildEnv
+sed -i "s?\${PATH//\$DIRNAME:/}?\"\$(echo \"\$PATH\" | sed \"s#\$DIRNAME:##g\")\"?g" BaseTools/BuildEnv
+sed -i "s?\${BASH_SOURCE\[0\]}?${0}?g" BaseTools/BuildEnv
+sed -i "s?\$PYTHON_COMMAND -c \"import edk2basetools\" \&> /dev/null?\[ "0" = "1" \]?g" BaseTools/BuildEnv
+
+
+
+export PYTHON_COMMAND="python$(python --version | cut -d ' ' -f2 | cut -d . -f 1-2)"
+export PYTHON3_ENABLE="TRUE"
+
+. ./edksetup.sh
+
+if [ "$2" = "shellonly" ]; then
+	echo "ACTIVE_PLATFORM       = ShellPkg/ShellPkg.dsc" >> Conf/target.txt
+	#this toolchain tag is still valid for gcc 10
+	echo "TOOL_CHAIN_TAG        =GCC5" >> Conf/target.txt
+
+	if [ "$(echo $TARGET | cut -d '-' -f 1)" = "i386" ] || [ "$(echo $TARGET | cut -d '-' -f 1)" = "i486" ] || [ "$(echo $TARGET | cut -d '-' -f 1)" = "i586" ] || [ "$(echo $TARGET | cut -d '-' -f 1)" = "i686" ]; then
+		echo "TARGET_ARCH           = IA32" >> Conf/target.txt
+	elif [ "$(echo $TARGET | cut -d '-' -f 1)" = "x86_64" ]; then
+		echo "TARGET_ARCH           = X64" >> Conf/target.txt
+	fi
+fi
+
+build
+
+#make DESTDIR=${SYSROOT}
+return "$?"
+}
+
+do_install(){
+#here you put the installation commands, like make install
+cd "${myBuildExtractDest}/${filename}"
+make DESTDIR=${SYSROOT} install
+return "$?"
+}
+
+do_package(){
+#here you package the files
+cp -a "${myBuildsDir}/${actualname}/${actualname}.control" "${CONTDIR}/control"
+printf "Architecture: %s\n" "$(printf "%s\n" "${TARGET}" | cut -d "-" -f 1-2)" >> "${CONTDIR}/control"
+
+printf "2.0" > "${BUILDDIR}/debian-binary"
+
+cd "${CONTDIR}"
+tar --numeric-owner --group=0 --owner=0 -czf "${BUILDDIR}/control.tar.gz" ./*
+
+cd "${SYSROOT}"
+tar --numeric-owner --group=0 --owner=0 -czf "${BUILDDIR}/data.tar.gz" ./*
+
+cd "${BUILDDIR}"
+tar --numeric-owner --group=0 --owner=0 -czf "${PKGDIR}/${actualname}_${version}.$(printf "%s" "${TARGET}" | cut -d "-" -f 1-2).ipk" ./debian-binary ./control.tar.gz ./data.tar.gz
+
+rm -rf "${CONTDIR}"
+rm -rf "${SYSROOT}"
+mkdir -p "${CONTDIR}"
+mkdir -p "${SYSROOT}"
+rm -f "${BUILDDIR}/debian-binary"
+rm -f "${BUILDDIR}/control.tar.gz"
+rm -f "${BUILDDIR}/data.tar.gz"
+
+cd "${myBuildHome}"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2" "$3"
+fi

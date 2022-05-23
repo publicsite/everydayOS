@@ -1,0 +1,186 @@
+#!/bin/sh
+
+#functions
+
+do_get(){
+
+	mkdir "${myBuildExtractDest}/yara-rules"
+
+	cd "${myBuildExtractDest}/yara-rules"
+
+	##see https://github.com/StefanKelm/yara-rules
+	##also see https://github.com/InQuest/awesome-yara
+	git clone https://github.com/advanced-threat-research/Yara-Rules
+	git clone https://github.com/bartblaze/Yara-rules
+	git clone https://github.com/ctxis/CAPE
+	git clone https://github.com/elektr0ninja/maldoc-rules
+	git clone https://github.com/mikesxrs/Open-Source-YARA-rules
+	git clone https://github.com/plushed/Yara-Rules
+	git clone https://github.com/reversinglabs/reversinglabs-yara-rules
+	git clone https://github.com/sirpedrotavares/SI-LAB-Yara_rules
+	git clone https://github.com/zourick/yrepo
+	git clone https://github.com/AlienVault-Labs/AlienVaultLabs
+	wget https://gist.githubusercontent.com/pedramamini/c586a151a978f971b70412ca4485c491/raw/68ba7792699177c033c673c7ffccfa7a0ed5ce47/XProtect.yara
+	git clone https://github.com/bwall/bamfdetect
+	git clone https://github.com/airbnb/binaryalert
+	git clone https://github.com/codewatchorg/Burp-Yara-Rules
+	git clone https://github.com/kevoreilly/CAPEv2
+	git clone https://github.com/CyberDefenses/CDI_yara
+	git clone https://github.com/citizenlab/malware-signatures
+	git clone https://github.com/stvemillertime/ConventionEngine
+	mkdir deadbits
+	cd deadbits
+	git clone https://github.com/deadbits/yara-rules
+	cd ..
+	git clone https://github.com/DidierStevens/DidierStevensSuite
+	git clone https://github.com/eset/malware-ioc
+	git clone https://github.com/fideliscyber/indicators
+	git clone https://github.com/mandiant/red_team_tool_countermeasures
+	git clone https://github.com/Neo23x0/signature-base
+	wget https://gist.githubusercontent.com/Neo23x0/f1bb645a4f715cb499150c5a14d82b44/raw/d621fcfd496d03dca78f9ff390cad88684139d64/iddqd.yar
+	git clone https://github.com/f0wl/yara_rules
+	git clone https://github.com/fboldewin/YARA-rules
+	git clone https://github.com/EmersonElectricCo/fsf
+	mkdir godaddy
+	cd godaddy
+	git clone https://github.com/godaddy/yara-rules
+	cd ..
+	mkdir h3x2b
+	cd h3x2b
+	git clone https://github.com/h3x2b/yara-rules
+	cd ..
+	##This one wasn't v. useful to me
+	##git clone https://github.com/SupportIntelligence/Icewater
+	mkdir imp0rtp3
+	cd imp0rtp3
+	git clone https://github.com/imp0rtp3/yara-rules
+	cd ..
+	mkdir intezer
+	cd intezer
+	git clone https://github.com/intezer/yara-rules
+	cd ..
+	mkdir InQuest
+	cd InQuest
+	git clone https://github.com/InQuest/yara-rules
+	cd ..
+	git clone https://github.com/jeFF0Falltrades/YARA-Signatures
+	git clone https://github.com/kevthehermit/YaraRules
+	git clone https://github.com/Hestat/lw-yara
+	git clone https://github.com/nccgroup/Cyber-Defence
+	git clone https://github.com/malice-plugins/yara
+	git clone https://github.com/malpedia/signator-rules
+	git clone https://github.com/advanced-threat-research/IOCs
+	mkdir prolsen
+	cd prolsen
+	git clone https://github.com/prolsen/yara-rules
+	cd ..
+	git clone https://github.com/tylabs/qs_old
+	git clone https://github.com/rastrea2r/rastrea2r
+	git clone https://github.com/reversinglabs/reversinglabs-yara-rules
+	git clone https://github.com/securitymagic/yara
+	git clone https://github.com/sophos-ai/yaraml_rules
+	git clone https://github.com/SpiderLabs/malware-analysis
+	git clone https://github.com/StrangerealIntel/DailyIOC
+	git clone https://github.com/t4d/PhishingKit-Yara-Rules
+	git clone https://github.com/telekom-security/malware_analysis
+	mkdir tenable
+	cd tenable
+	git clone https://github.com/tenable/yara-rules
+	cd ..
+	git clone https://github.com/tjnel/yara_repo
+	git clone https://github.com/VectraThreatLab/reyara
+	git clone https://github.com/volexity/threat-intel
+	#wget https://raw.githubusercontent.com/x64dbg/yarasigs/master/Old_Internal_PEiD.yara
+	#wget https://raw.githubusercontent.com/x64dbg/yarasigs/master/crypto_signatures.yara
+	#wget https://raw.githubusercontent.com/x64dbg/yarasigs/master/packer_compiler_signatures.yara
+	#wget https://raw.githubusercontent.com/x64dbg/yarasigs/master/rich.yara
+	git clone https://github.com/wrayjustin/yaids
+	git clone https://github.com/Xumeiquer/yara-forensics
+	git clone https://github.com/Yara-Rules/rules
+	git clone https://github.com/fr0gger/Yara-Unprotect
+
+	return "$?"
+}
+
+do_extract(){
+	return 1
+}
+
+do_build(){
+#here you put commands like configure and make
+
+return $?
+}
+
+do_install(){
+
+	mkdir -p "$1/yara"
+
+	cd "$1/yara"
+
+	cp "${myBuildsDir}/yara-rules/run-yara.sh" .
+	chmod +x run-yara.sh
+
+	if [ -d yara-rules-copied ]; then
+		rm -rf yara-rules-copied
+	fi
+
+	mkdir yara-rules-copied
+	cd yara-rules-copied
+
+#these rules don't work with the scanner
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/Fidelis/win_vbs_rat_hworm.yara
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/alienvault/APT1_known_malicious_RARSilent.yar
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/AirBnB/malware_macos_proton_rat_generic.yara
+rm ${myBuildExtractDest}/yara-rules/Burp-Yara-Rules/blackhole2_htm4.yar
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/SenseCy/njrat_08d.yar
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/pombredanne/Android_FakeBank_Fanta.yar
+rm ${myBuildExtractDest}/yara-rules/Yara-rules/rules/crimeware/ArechClient_Campaign_July2021.yar
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/symantec/Karagany.yar
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/codewatchorg/blackhole2_htm4.yar
+rm ${myBuildExtractDest}/yara-rules/yrepo/Mobile_Malware/Android_FakeBank_Fanta.yar
+rm ${myBuildExtractDest}/yara-rules/AlienVaultLabs/peid2yar/outputs/userdb_jclausing.yar
+rm ${myBuildExtractDest}/yara-rules/DidierStevensSuite/peid-userdb-rules-without-pe-module.yara
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/unknown/userdb_exeinfope.yara
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/unknown/UserDB.yara
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/unknown/userdb_jclausing.yara
+rm ${myBuildExtractDest}/yara-rules/Open-Source-YARA-rules/unknown/userdb_panda.yara
+rm ${myBuildExtractDest}/yara-rules/AlienVaultLabs/peid2yar/outputs/UserDB.yar
+rm ${myBuildExtractDest}/yara-rules/AlienVaultLabs/peid2yar/outputs/userdb_exeinfope.yar
+rm ${myBuildExtractDest}/yara-rules/AlienVaultLabs/peid2yar/outputs/userdb_panda.yar
+
+	find "${myBuildExtractDest}/yara-rules" -maxdepth 1 -mindepth 1 -type d | while read directory; do
+
+		mkdir "$(basename "${directory}")"
+		cd "$(basename "${directory}")"
+
+		find "${directory}" -name "*.ya*" -type f | while read line; do
+			n="0"
+			while true; do	
+				if ! [ -e "$PWD/${n}_$(basename "$line")" ]; then	
+					#these identifiers dont work
+					if [ "$(grep "hash.md5" "$line")" = "" ] && [ "$(grep "IsElfFile" "$line")" = "" ] && [ "$(grep "imphash" "$line")" = "" ] && [ "$(grep " pe\." "$line")" = "" ]; then
+							cp -a "$line" "${n}_$(basename "$line")"
+					fi
+					break
+				fi
+				n="$(expr $n + 1)"
+			done
+		done
+
+		cd ..
+	done
+
+return 1
+}
+
+do_package(){
+#here you package the files
+echo "package!"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2"
+fi

@@ -1,0 +1,77 @@
+#!/bin/sh
+
+wikipage=""
+homepage=""
+checksum=""
+
+actualname="k3d"
+version="master"
+filename="${actualname}-${version}"
+extension=".tar.gz"
+source="https://github.com/K-3D/${actualname}/archive/refs/heads/${version}${extension}"
+sumUrl=""
+
+#functions
+
+do_get(){
+
+	cd "${myBuildExtractDest}"
+
+	"${myBuildHelpersDir}"/myBuildGet.sh "${source}" "${myBuildSourceDest}"
+	mv "${myBuildSourceDest}/master${extension}" "${myBuildSourceDest}/${filename}${extension}"
+
+	return "$?"
+}
+
+do_extract(){
+	"${myBuildHelpersDir}"/myBuildExtract.sh "${myBuildSourceDest}/${filename}${extension}" "${myBuildExtractDest}"
+	return 1
+}
+
+do_build(){
+#here you put commands like configure and make
+
+	cd "${myBuildExtractDest}/${filename}"
+
+        #https://github.com/K-3D/k3d/issues/42
+        sed -i -e "/^namespace k3d/i\ #include <algorithm>" k3dsdk/property_collection.cpp
+
+        #https://github.com/K-3D/k3d/issues/43
+        rm -r k3dsdk/gil/boost/gil/extension/numeric
+
+	mkdir k3d-build
+	cd k3d-build
+
+	#we disable python2 stuff until somebody updates the k3b project to python3
+        cmake \
+         -DCMAKE_BUILD_TYPE=Release \
+         -DCMAKE_INSTALL_PREFIX="${PREFIX}/${TARGET}" \
+         -DPYTHON_EXECUTABLE=/usr/bin/python2 \
+         -Wno-dev ..
+	make DESTDIR=${SYSROOT}
+
+return $?
+}
+
+do_install(){
+	cd "${myBuildExtractDest}/${filename}/k3d-build"
+
+	make DESTDIR=${SYSROOT} install	
+
+	#init these directories so k3d starts OK
+	mkdir -p ${SYSROOT}/share/k3d
+	mkdir -p ${SYSROOT}/lib/k3d/plugins
+
+	return "$?"
+}
+
+do_package(){
+#here you package the files
+echo "package!"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2"
+fi

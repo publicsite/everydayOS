@@ -1,0 +1,115 @@
+#!/bin/sh
+sum="7697436a361f4eb0aa03dcdde22817c06ba61c48"
+actualname="toxtree"
+version="4.1.0-SNAPSHOT"
+version3="3.1.0-SNAPSHOT"
+filename="${actualname}-${version}"
+extension=".zip"
+source="https://sourceforge.net/code-snapshots/git/t/to/${actualname}/git.git/${actualname}-git-${sum}${extension}"
+
+
+actualname2="mavencentralreconstruction"
+version2="1"
+filename2="${actualname2}-${version2}"
+extension2=".tar.gz"
+source2="https://github.com/publicsite/MavenCentralReconstruction/archive/refs/heads/main${extension2}"
+sumUrl=""
+
+#functions
+
+do_get(){
+
+	if [ "$1" = stage1 ]; then
+		"${myBuildHelpersDir}"/myBuildGet.sh "${source2}" "${myBuildSourceDest}"
+		mv "${myBuildSourceDest}/main${extension2}" "${myBuildSourceDest}/${filename2}${extension2}"
+		"${myBuildHelpersDir}"/myBuildGet.sh "${source}" "${myBuildSourceDest}"
+		return "$?"
+	else
+		cd "${myBuildExtractDest}/${actualname}"
+		#get dependency sources
+		./callGetSources.sh "org.openscience.cdk" "cdk-interfaces" "2.7.1"
+		./callGetSources.sh "org.openscience.cdk" "cdk-silent" "2.7.1"
+		./callGetSources.sh "org.openscience.cdk" "cdk-silent" "2.7.1"
+		./callGetSources.sh "org.openscience.cdk" "cdk-smiles" "2.7.1"
+		./callGetSources.sh "org.openscience.cdk" "cdk-io" "2.7.1"
+		./callGetSources.sh "hamcrest" "org.hamcrest" "2.2-rc1"
+		./callGetSources.sh "dk.smartcyp" "smartcyp" "${version3}"
+		./callGetSources.sh "toxtree" "toxtree" "${version}"
+	fi
+}
+
+do_extract(){
+	"${myBuildHelpersDir}"/myBuildExtract.sh "${myBuildSourceDest}/${filename2}${extension2}" "${myBuildExtractDest}"
+	mv "${myBuildExtractDest}/MavenCentralReconstruction"* "${myBuildExtractDest}/${actualname}" 
+	mkdir -p "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${version}"
+	mkdir -p "${myBuildExtractDest}/${actualname}/sources/structure/dk.smartcyp/smartcyp/${version3}"
+	unzip "${myBuildSourceDest}/${actualname}-git-${sum}${extension}" -d "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}"
+	mv "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${actualname}-git-${sum}/${actualname}" "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${version}/extractedSources"
+	mv "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${actualname}-git-${sum}/smartcyp" "${myBuildExtractDest}/${actualname}/sources/structure/dk.smartcyp/smartcyp/${version3}/extractedSources"
+	rmdir "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${actualname}-git-${sum}"
+	ln -s "extractedSources/pom.xml" "${myBuildExtractDest}/${actualname}/sources/structure/${actualname}/${actualname}/${version}/${actualname}-${version}.pom"
+	ln -s "extractedSources/pom.xml" "${myBuildExtractDest}/${actualname}/sources/structure/dk.smartcyp/smartcyp/${version3}/smartcyp-${version3}.pom"
+
+	return "$?"
+}
+
+
+do_build(){
+#here you put commands like configure and make
+
+cd "${myBuildExtractDest}/${actualname}"
+
+#run the reconstruction
+./reconstruct6.sh
+
+#build the classes
+./firstParse5.sh
+
+return "$?"
+}
+
+do_install(){
+#here you put the installation commands, like make install
+cd "${myBuildExtractDest}/${filename}"
+mkdir "${SYSROOT}/usr/lib/${actualname}"
+mv src/${actualname}.jar "${SYSROOT}/usr/lib/${actualname}"
+echo '#!/bin/sh' > "${SYSROOT}/usr/bin/${actualname}"
+echo 'java -jar /usr/lib/${actualname}/${actualname}.jar' >> "${SYSROOT}/usr/bin/${actualname}"
+chmod +x "${SYSROOT}/usr/bin/${actualname}"
+
+make DESTDIR=${SYSROOT} install
+return "$?"
+}
+
+do_package(){
+#here you package the files
+cp -a "${myBuildsDir}/${actualname}/${actualname}.control" "${CONTDIR}/control"
+printf "Architecture: %s\n" "$(printf "%s\n" "${TARGET}" | cut -d "-" -f 1-2)" >> "${CONTDIR}/control"
+
+printf "2.0" > "${BUILDDIR}/debian-binary"
+
+cd "${CONTDIR}"
+tar --numeric-owner --group=0 --owner=0 -czf "${BUILDDIR}/control.tar.gz" ./*
+
+cd "${SYSROOT}"
+tar --numeric-owner --group=0 --owner=0 -czf "${BUILDDIR}/data.tar.gz" ./*
+
+cd "${BUILDDIR}"
+tar --numeric-owner --group=0 --owner=0 -czf "${PKGDIR}/${actualname}_${version}.$(printf "%s" "${TARGET}" | cut -d "-" -f 1-2).ipk" ./debian-binary ./control.tar.gz ./data.tar.gz
+
+rm -rf "${CONTDIR}"
+rm -rf "${SYSROOT}"
+mkdir -p "${CONTDIR}"
+mkdir -p "${SYSROOT}"
+rm -f "${BUILDDIR}/debian-binary"
+rm -f "${BUILDDIR}/control.tar.gz"
+rm -f "${BUILDDIR}/data.tar.gz"
+
+cd "${myBuildHome}"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2" "$3"
+fi

@@ -1,0 +1,46 @@
+#!/bin/sh
+
+#functions
+
+do_get(){
+
+	cd "${myBuildExtractDest}"
+	git clone "https://github.com/Lazza/RecuperaBit/"
+	return "$?"
+}
+
+do_extract(){
+	return 1
+}
+
+do_build(){
+#here you put commands like configure and make
+
+return $?
+}
+
+do_install(){
+
+	mkdir -p "$1/recuperabit"
+
+	cd "$1/recuperabit"
+
+	if [ -d RecuperaBit ]; then
+		rm -rf RecuperaBit
+	fi
+
+	cp -a "${myBuildExtractDest}/RecuperaBit" .
+
+return 1
+}
+
+do_package(){
+#here you package the files
+echo "package!"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2"
+fi

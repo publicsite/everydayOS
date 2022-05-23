@@ -1,0 +1,49 @@
+#!/bin/sh
+
+#functions
+
+do_get(){
+
+	cd "${myBuildExtractDest}"
+	git clone "https://github.com/mandiant/capa-rules"
+	return "$?"
+}
+
+do_extract(){
+	return 1
+}
+
+do_build(){
+#here you put commands like configure and make
+
+return $?
+}
+
+do_install(){
+
+	mkdir -p "$1/capa"
+
+	cd "$1/capa"
+
+	cp "${myBuildsDir}/capa-rules/run-capa.sh" .
+	chmod +x run-capa.sh
+
+	if [ -d capa-rules-copied ]; then
+		rm -rf capa-rules-copied
+	fi
+
+	cp -a "${myBuildExtractDest}/capa-rules" ./capa-rules-copied
+
+return 1
+}
+
+do_package(){
+#here you package the files
+echo "package!"
+return "$?"
+}
+
+if [ "$myBuildDoNotCallMainFunction" != "1" ]; then
+#main code goes here
+"${myBuildHelpersDir}"/argumentHelper.sh "$1" "$0" "$2"
+fi

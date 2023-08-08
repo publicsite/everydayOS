@@ -1,9 +1,9 @@
 #!/bin/sh
 
-thefdisk="busybox fdisk"
+thefdisk="/sbin/fdisk"
 thechroot="/usr/sbin/chroot"
-themkfsext="/sbin/mkfs.ext4"
-themkfsfat="/sbin/mkfs.vfat"
+themkfsext4="/sbin/mkfs.ext4"
+themkfsfat="/sbin/mkfs.fat"
 
 mkdir /tmp/installToHDD
 cd /tmp/installToHDD
@@ -148,23 +148,45 @@ done
 
 #SECTION: KEYBOARD LAYOUT
 printListOfKeymaps(){
-	find "${1}/usr/share/X11/xkb/symbols/" -maxdepth 1 -type f | sort | while read line4; do
-		basename "${line4}"
+	off="true"
+	OLD_IFS="$IFS"
+	IFS='\n'
+	cat "${1}/usr/share/X11/xkb/rules/base.lst" | while read line; do
+		if [ "$line" = "$2" ]; then
+			off="false"
+		else
+			if [ "$off" = "false" ]; then
+				if [ "$line" = "" ]; then
+					break
+				else
+					if [ "$3" = "" ]; then
+						printf ""
+						echo "${line}"
+					else
+						thelinecut="$(echo "${line}" | sed "s/  /\t/g" | sed "s/\t /\t/g" | tr -s "\t")"
+						if [ "$(echo "$thelinecut" | cut -f 3- | grep "^${3}\:.*")" != "" ]; then
+							echo "${line}"
+						fi
+					fi
+				fi
+			fi
+		fi
+
 	done
+	IFS="$OLD_IFS"
 }
 
 check_for_layout(){
 		OLD_IFS="$IFS"
 		IFS='\n'
-		printListOfKeymaps "$1" "$3" | while read line3; do
-			if [ "$2" = "$(echo ${line3} | cut -f 2)" ]; then
+		printListOfKeymaps "$1" "$3" | sed "s/  /\t/g" | sed "s/\t /\t/g" | tr -s "\t" | while read line; do
+			if [ "$2" = "$(echo ${line} | cut -f 2)" ]; then
 				echo "found"
 				break
 			fi
 		done
 		IFS="$OLD_IFS"
 }
-
 
 choose_layout(){
 while true; do
@@ -182,24 +204,24 @@ while true; do
 	else
 		if [ "$(check_for_layout "${1}" "${option8}" "! layout")" = "found" ]; then
 			printf "Setting layout to %s.\n\n" "${option8}"
-			sed -i "s/XKBLAYOUT=\w*/XKBLAYOUT=${option8}/g" "${1}/etc/default/keyboard"
-			##while true; do
-			##		printf "*** Please wait while I print your variants for %s ***\n" "${option8}"
-			##		printf "*** Then, type a variant code ***\n"
-			##		printf "*** Or otherwise type \"C\" to not bother setting a keyboard variant ***\n"
-			##		printListOfKeymaps "${1}" "! variant" "${option8}"
-			##		read option9
-			##	if [ "${option9}" = "C" ] || [ "${option9}" = "c" ]; then
-			##		echo ""
-			##		printf "***Not setting keyboard variant.***"
-			##		echo ""
-			##		break
-			##	elif [ "$(check_for_layout "${1}" "${option9}" "! variant")" = "found" ]; then
-			##		printf "Setting variant to %s.\n\n" "${option9}"
-			##		sed -i 's/XKBVARIANT=\"\w*"/XKBVARIANT=\"'${option9}'\"/g' "${1}/etc/default/keyboard"
-			##		break
-			##	fi
-			##done
+			sed -i 's/XKBLAYOUT=\"\w*"/XKBLAYOUT=\"'${option8}'\"/g' "${1}/etc/default/keyboard"
+			while true; do
+					printf "*** Please wait while I print your variants for %s ***\n" "${option8}"
+					printf "*** Then, type a variant code ***\n"
+					printf "*** Or otherwise type \"C\" to not bother setting a keyboard variant ***\n"
+					printListOfKeymaps "${1}" "! variant" "${option8}"
+					read option9
+				if [ "${option9}" = "C" ] || [ "${option9}" = "c" ]; then
+					echo ""
+					printf "***Not setting keyboard variant.***"
+					echo ""
+					break
+				elif [ "$(check_for_layout "${1}" "${option9}" "! variant")" = "found" ]; then
+					printf "Setting variant to %s.\n\n" "${option9}"
+					sed -i 's/XKBVARIANT=\"\w*"/XKBVARIANT=\"'${option9}'\"/g' "${1}/etc/default/keyboard"
+					break
+				fi
+			done
 			break
 		fi
 	fi
@@ -216,7 +238,7 @@ while true; do
 		echo ""
 		echo "***Writing syslinux.***"
 		echo ""
-		dd bs=440 count=1 conv=notrunc if="/usr/lib/syslinux/mbr/mbr.bin" of=${1}
+		dd bs=440 count=1 conv=notrunc if=/usr/lib/syslinux/mbr/mbr.bin of=${1}
 		echo ""
 		break
 	elif [ "${option4}" = "N" ] || [ "${option4}" = "n" ]; then
@@ -241,7 +263,6 @@ efi_partition(){
 				echo "***Creating EFI boot partition.***"
 				echo ""
 				printf "n\np\n1\n\n+256M\nt\nef\nw" | ${thefdisk} ${1}
-
 				${themkfsfat} -F 32 ${1}1
 				mkdir -p /tmp/installToHDD/efi
 				mount ${1}1 /tmp/installToHDD/efi
@@ -263,7 +284,7 @@ efi_partition(){
 				#echo "DEFAULT 1" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
 				#echo "" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
 				#echo "label 1" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
-				#echo "    MENU LABEL Myixos" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
+				#echo "    MENU LABEL Devuan testing" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
 				#echo "    KERNEL /vmlinuz" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
 				#echo "    APPEND initrd=/initrd.img root=LABEL=${THELABEL} init=/sbin/init" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
 				#echo "    TIMEOUT 1" >> /tmp/installToHDD/efi/EFI/BOOT/syslinux.cfg
@@ -307,14 +328,7 @@ echo w #Write
 		elif [ "$3" = "createfilesystem" ]; then
 			PARTITIONNUMBER="${2}"
 			THEPARTITION="${1}${PARTITIONNUMBER}"
-			"${themkfsext}" "${THEPARTITION}" -L "${THELABEL}"
-
-(
-echo a # set partition boot flag
-echo ${PARTITIONNUMBER} # set partition boot flag
-echo w #Write
-) | ${thefdisk} ${1}
-
+			"${themkfsext4}" "${THEPARTITION}" -L "${THELABEL}"
 			echo ""
 			echo "***Filesystem on ${THEPARTITION} created.***"
 			echo ""
@@ -364,87 +378,11 @@ done
 }
 
 create_partition (){
-partitionnumber="$(${thefdisk} -l | tail -n 1 | cut -d ' ' -f1 | grep -o [0-9])"
-if [ "$partitionnumber" = "" ]; then
-	partitionnumber=0
-fi
-partitionnumber="$(expr $partitionnumber + 1)"
-while true; do
-	echo ""
-	echo "Enter partition number for partition (default: ${partitionnumber}), or enter D for done."
-	read option2
-	if [ "${option2}" = "D" ] || [ "${option2}" = "d" ]; then
-		break;
-	elif [ "${option2}" != "" ]; then
-		partitionnumber="$option2"
-		break
-	else
-		break
-	fi
-done
-
-if [ "$partitionnumber" != "D" ] && [ "$partitionnumber" != "d" ]; then
-
-	startlba="$(${thefdisk} -l ${1} | tail -n 1 | sed "s/\*//g" | tr -s ' ' | cut -d " " -f 5)"
-	if [ "$startlba" = "" ]; then
-		startlba=0
-	fi
-	startlba="$(expr "${startlba}" + 1)"
-	while true; do
-		echo ""
-		echo "Enter StartLBA (default: ${startlba}), or enter D for done."
-		read option2
-		if [ "${option2}" = "D" ] || [ "${option2}" = "d" ]; then
-			break
-		elif [ "${option2}" != "" ] && [ "$(echo "${option2}" | sed "s/[0-9]//g")" = "" ] ; then
-			startlba="${option2}"
-			break
-		elif [ "${option2}" = "" ]; then
-			break
-		fi
-	done
-
-	if [ "$startlba" != "D" ] && [ "$startlba" != "d" ]; then
-
-		endlba="$(${thefdisk} -l | head -n 1 | grep -o "[0-9]* sectors" | cut -d ' ' -f 1)"
-		endlba="$(expr "${endlba}" - 1)"
-		while true; do
-			echo ""
-			echo "Enter EndLBA (default: ${endlba}), or +size{,K,M,G,T}, or enter D for done."
-			read option2
-			if [ "${option2}" = "D" ] || [ "${option2}" = "d" ]; then
-				break
-			elif [ "$(echo "${option2}" | grep "+[0-9]*K")" != "" ] || [ "$(echo "${option2}" | grep "+[0-9]*M")" != "" ] || [ "$(echo "${option2}" | grep "+[0-9]*G")" != "" ] || [ "$(echo "${option2}" | grep "+[0-9]*T")" != "" ] || [ "$(echo "${option2}" | grep "[0-9]*")" != "" ]; then
-				endlba="${option2}"
-				break
-			elif [ "${option2}" = "" ]; then
-				break
-			fi
-		done
-
-		if [ "$endlba" != "D" ] && [ "$endlba" != "d" ]; then
 echo ""
-echo "*** Writing partition! ***"
+echo "*** Remember to use \"w\" for write and/or \"q\" for quit! ***"
 echo ""
-printf "n\np\n%d\n%d\n%s\nw\n" "${partitionnumber}" "${startlba}" "${endlba}" | ${thefdisk} ${1}
-
-		fi
-	fi
-fi
+(printf "n\n" ; cat) | ${thefdisk} ${1}
 }
-
-while true; do
-echo ""
-echo "Would you like to:"
-echo "1) Create a new DOS partition table"
-echo "2) Next"
-read option14
-	if [ "${option14}" = 1 ]; then
-		printf "o\nw\n" | ${thefdisk} ${1}
-	elif [ "${option14}" = 2 ]; then
-		break
-	fi
-done
 
 while true; do
 ${thefdisk} -l "$1"
@@ -502,12 +440,8 @@ echo "*** Copying the files ***"
 #copy the files
 dest="${thepwd}/tempmount"
 cd /
-find . -maxdepth 1 -mindepth 1 -type d | cut -c 2- | while read line; do mkdir -p ${dest}${line}; chmod "$(stat -c '%a' .${line})" ${dest}${line}; chown "$(stat -c "%U:%G" .${line})" ${dest}${line}; done
-find . -maxdepth 1 -mindepth 1 -type b | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
-find . -maxdepth 1 -mindepth 1 -type c | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
-find . -maxdepth 1 -mindepth 1 -type l | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
-find . -maxdepth 1 -mindepth 1 -type p | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
-find . -maxdepth 1 -mindepth 1 -type f | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+find . -maxdepth 1 -mindepth 1 -type d | cut -c 2- | while read line; do mkdir -p ${dest}${line}; chmod --reference=.${line} ${dest}${line}; chown --reference=.${line} ${dest}${line}; done
+find . -maxdepth 1 -mindepth 1 -type b,c,l,p,f | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
 find . -maxdepth 2 -mindepth 2 | cut -c 2- | grep -v "^/isolinux/*\|^/swapfile\|^/overlay/*\|^/dev/*\|^/proc/*\|^/sys/*\|^/tmp/*\|^/run/*\|^/mnt/*\|^/media/*\|^/lost+found" | while read line; do cp -a .${line} ${dest}${line}; done
 cd "${thepwd}"
 
@@ -518,7 +452,7 @@ echo "PROMPT 1" >> tempmount/boot/extlinux/extlinux.conf
 echo "DEFAULT 1" >> tempmount/boot/extlinux/extlinux.conf
 echo "" >> tempmount/boot/extlinux/extlinux.conf
 echo "label 1" >> tempmount/boot/extlinux/extlinux.conf
-echo "    MENU LABEL Myixos" >> tempmount/boot/extlinux/extlinux.conf
+echo "    MENU LABEL Devuan testing" >> tempmount/boot/extlinux/extlinux.conf
 echo "    KERNEL /vmlinuz" >> tempmount/boot/extlinux/extlinux.conf
 echo "    APPEND initrd=/initrd.img root=LABEL=${THELABEL} init=/sbin/init" >> tempmount/boot/extlinux/extlinux.conf
 echo "    TIMEOUT 1" >> tempmount/boot/extlinux/extlinux.conf
@@ -535,7 +469,7 @@ ln -s /boot/extlinux/extlinux.conf tempmount/boot/syslinux.cfg
 #echo "DEFAULT 1" >> tempmount/boot/syslinux.cfg
 #echo "" >> tempmount/boot/syslinux.cfg
 #echo "label 1" >> tempmount/boot/syslinux.cfg
-#echo "    MENU LABEL Myixos" >> tempmount/boot/syslinux.cfg
+#echo "    MENU LABEL Devuan testing" >> tempmount/boot/syslinux.cfg
 #echo "    KERNEL /vmlinuz" >> tempmount/boot/syslinux.cfg
 #echo "    APPEND initrd=/initrd.img root=LABEL=${THELABEL} init=/sbin/init" >> tempmount/boot/syslinux.cfg
 #echo "    TIMEOUT 1" >> tempmount/boot/syslinux.cfg
@@ -547,7 +481,7 @@ ln -s /boot/extlinux/extlinux.conf tempmount/boot/syslinux.cfg
 #echo "DEFAULT 1" >> tempmount/extlinux/extlinux.conf
 #echo "" >> tempmount/extlinux/extlinux.conf
 #echo "label 1" >> tempmount/extlinux/extlinux.conf
-#echo "    MENU LABEL Myixos" >> tempmount/extlinux/extlinux.conf
+#echo "    MENU LABEL Devuan testing" >> tempmount/extlinux/extlinux.conf
 #echo "    KERNEL /vmlinuz" >> tempmount/extlinux/extlinux.conf
 #echo "    APPEND initrd=/initrd.img root=LABEL=${THELABEL} init=/sbin/init" >> tempmount/extlinux/extlinux.conf
 #echo "    TIMEOUT 1" >> tempmount/extlinux/extlinux.conf
@@ -576,11 +510,9 @@ printf "Type the alphanumeric hostname you wish to use for this machine and pres
 	fi
 done
 
-choose_layout "${dest}"
-
-#set_locale "${dest}"
+set_locale "${dest}"
 set_timezone "${dest}"
-
+choose_layout "${dest}"
 
 howManyGLeft="$(df -h "$dest" | head -n 2 | tail -n 1 | tr -s " " | cut -d " " -f 4)"
 if [ "$(printf "%s" "$howManyGLeft" | grep "G")" != "" ]; then
@@ -625,6 +557,12 @@ printf "You do not have enough space to create a swap, so not bothering to ask\n
 fi
 
 umount tempmount
+
+(
+echo a # set partition boot flag
+echo 1 # set partition boot flag
+echo w #Write
+) | ${thefdisk} ${1}
 
 cd
 

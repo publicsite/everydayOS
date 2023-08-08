@@ -20,6 +20,10 @@ fi
 
 mount -t overlay overlay -o lowerdir=/,upperdir=/overlay/tmpfs/upperdir,workdir=/overlay/tmpfs/workdir /overlay/mountpoint
 
+mount --bind dev /overlay/mountpoint/dev
+mount --bind proc /overlay/mountpoint/proc
+mount --bind sys /overlay/mountpoint/sys
+
 #pivot_root /overlay/mountpoint /
 #exec chroot /overlay/mountpoint /sbin/init
 

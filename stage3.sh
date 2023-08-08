@@ -61,6 +61,7 @@ xfce4-pulseaudio-plugin \
 xfce4-terminal \
 xfce4-whiskermenu-plugin \
 thunar \
+thunar-archive-plugin \
 xdm \
 blueman \
 qalculate-gtk \
@@ -74,7 +75,7 @@ vlc \
 mousepad \
 pavucontrol \
 libreoffice \
-xarchiver \
+file-roller \
 evince \
 gparted \
 htop \
@@ -83,6 +84,8 @@ firmware-linux-free
 
 apt-get -m -y install --no-install-recommends \
 "$2" \
+console-setup-mini \
+pciutils \
 bc \
 breeze-icon-theme \
 extlinux \
@@ -117,7 +120,6 @@ fdisk \
 less \
 xfce4-session \
 connman \
-connman-ui \
 connman-gtk \
 xfce4-power-manager \
 xfce4-power-manager-plugins \
@@ -136,7 +138,6 @@ firmware-bnx2x \
 firmware-brcm80211 \
 firmware-cavium \
 firmware-intel-sound \
-firmware-intelwimax \
 firmware-iwlwifi \
 firmware-libertas \
 firmware-linux \
@@ -153,7 +154,7 @@ firmware-siano \
 firmware-ti-connectivity \
 firmware-zd1211 \
 intel-microcode \
-midisport-firmware
+tzdata
 
 echo "TYPE PASSWORD FOR: root"
 passwd root

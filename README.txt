@@ -1,3 +1,5 @@
+##About
+
 EverydayOS is an operating system you can use every day.
 
 It is based on Devuan testing.
@@ -10,3 +12,7 @@ Run
 From the live environment to install to hard disk.
 
 The image boots from both UEFI and legacy bios.
+
+## Donate
+
+https://www.paypal.com/donate/?hosted_button_id=SZABYRV48SAXW

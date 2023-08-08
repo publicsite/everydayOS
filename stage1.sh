@@ -23,7 +23,7 @@ cd $(dirname $(realpath $0))
 
 thepwd="${PWD}"
 
-ISONAME="devuan_chimaera_4.0.0_i386_minimal-live.iso"
+ISONAME="devuan_chimaera_4.0.3_i386_minimal-live.iso"
 wget "http://mirror.alpix.eu/devuan/devuan_chimaera/minimal-live/${ISONAME}"
 mkdir "${thepwd}/mountpoint"
 sudo mount -o loop "${ISONAME}" "${thepwd}/mountpoint"
@@ -62,6 +62,10 @@ sudo cp -a "${thepwd}/.xinitrc" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xinitrc"
 sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xsession"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xsession" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xinitrc"
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0"
+sudo cp -a "${thepwd}/gtk-configs/gtk.css" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/settings.ini" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/.gtkrc-2.0" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
 
 #copy some config files to /root in the inner rootfs
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/Desktop"
@@ -71,6 +75,14 @@ sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
 sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/.xsession"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xsession" "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0"
+sudo cp -a "${thepwd}/gtk-configs/gtk.css" "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/settings.ini" "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/.gtkrc-2.0" "${thepwd}/mountpoint/workdir/rootfs/root/"
+
+#copy touchpad tap-to-click xorg setting to /usr/share/X11/xorg.conf.d in the inner rootfs
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/usr/share/X11/xorg.conf.d"
+sudo cp "${thepwd}/50-synaptics.conf" "${thepwd}/mountpoint/workdir/rootfs/usr/share/X11/xorg.conf.d/50-synaptics.conf"
 
 #create /etc/resolv.conf for inner rootfs
 cat /etc/resolv.conf | sudo tee "${thepwd}/mountpoint/workdir/rootfs/etc/resolv.conf"

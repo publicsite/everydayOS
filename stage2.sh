@@ -44,15 +44,18 @@ apt-get -m -y install build-essential bison flex libssl-dev
 #for efilinux
 apt-get -m -y install gnu-efi
 
+#to restore permissions
+apt-get -m -y install acl
+
 ###for dooble
 ##apt-get -m -y install make g++ qt5-qmake qtbase5-dev libqt5charts5 libqt5charts5-dev libqt5qml5 libqt5webenginewidgets5 qtwebengine5-dev libqt5webengine5 qtwebengine5-dev-tools
 ###for tianocore
 ##apt-get -m -y install uuid-dev python3 python-is-python3 nasm
 
-debootstrap --arch=${THEARCH} --variant=minbase --components=main,contrib,non-free --include=ifupdown testing "${PWD}/rootfs" "${THEMIRROR}"
+debootstrap --arch=${THEARCH} --variant=minbase --components=main,contrib,non-free-firmware --include=ifupdown testing "${PWD}/rootfs" "${THEMIRROR}"
 
-printf "deb %s testing main contrib non-free\n" "${THEMIRROR}" > rootfs/etc/apt/sources.list
-printf "deb-src %s testing main contrib non-free\n" "${THEMIRROR}" >> rootfs/etc/apt/sources.list
+printf "deb %s testing main contrib non-free-firmware\n" "${THEMIRROR}" > rootfs/etc/apt/sources.list
+printf "deb-src %s testing main contrib non-free-firmware\n" "${THEMIRROR}" >> rootfs/etc/apt/sources.list
 
 printf "live-hybrid-iso\n" > "rootfs/etc/hostname"
 chmod 644 "rootfs/etc/hostname"

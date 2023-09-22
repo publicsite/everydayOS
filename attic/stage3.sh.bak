@@ -31,9 +31,6 @@ chmod -Rv 700 /var/cache/apt/archives/partial/
 
 chown -Rv _apt:root /var/cache/apt/archives/partial/
 
-#add messagebus group
-/usr/sbin/groupadd messagebus
-
 export DEBIAN_FRONTEND=noninteractive
 export LC_ALL=C
 export LANG=C
@@ -45,11 +42,7 @@ apt-get -y autoremove  exim4-config exim4-base exim4-daemon-light exim4-config-2
 #update the system
 apt-get -y update && apt-get -y upgrade
 
-if [ "$THEARCH" = "i*86" ] || [ "$THEARCH" = "x86_64" ]; then
-apt-get -m -y install grub-efi-ia32
-fi
-
-apt-get -m -y install efibootmgr \
+apt-get -m -y install efibootmgr syslinux-efi \
 task-laptop \
 task-english \
 alsa-utils \
@@ -77,6 +70,7 @@ viking \
 kolourpaint \
 hexchat \
 telegram-desktop \
+transmission-gtk \
 vlc \
 mousepad \
 pavucontrol \
@@ -86,12 +80,7 @@ evince \
 gparted \
 htop \
 claws-mail \
-firmware-linux-free \
-grub2 xorriso mtools \
-busybox \
-acl
-
-#transmission-gtk \
+firmware-linux-free
 
 apt-get -m -y install --no-install-recommends \
 "$2" \
@@ -99,6 +88,8 @@ console-setup-mini \
 pciutils \
 bc \
 breeze-icon-theme \
+extlinux \
+syslinux-common \
 wget \
 nano \
 vim \
@@ -207,13 +198,6 @@ if [ -f "rootfs/usr/share/X11/xorg.conf.d/40-libinput.conf" ]; then
 	done
 	IFS="$OLD_IFS"
 fi
-
-#for some reasons the permissions got changed once, so I set them here just to be safe
-chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper
-chmod 4754 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
-
-
-chown -R user:user /home/user
 
 apt-get clean
 

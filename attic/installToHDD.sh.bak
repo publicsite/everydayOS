@@ -182,7 +182,7 @@ while true; do
 	else
 		if [ "$(check_for_layout "${1}" "${option8}" "! layout")" = "found" ]; then
 			printf "Setting layout to %s.\n\n" "${option8}"
-			sed -i "s/XKBLAYOUT=*/XKBLAYOUT=\"${option8}\"/g" "${1}/etc/default/keyboard"
+			sed -i "s/XKBLAYOUT=\w*/XKBLAYOUT=${option8}/g" "${1}/etc/default/keyboard"
 			##while true; do
 			##		printf "*** Please wait while I print your variants for %s ***\n" "${option8}"
 			##		printf "*** Then, type a variant code ***\n"
@@ -208,25 +208,25 @@ done
 
 #SECTION: OTHER
 
-#install_syslinux(){
-#while true; do
-#		echo "Would you like to install syslinux to the MBR [Y/N]?"
-#		read option4
-#	if [ "${option4}" = "Y" ] || [ "${option4}" = "y" ]; then
-#		echo ""
-#		echo "***Writing syslinux.***"
-#		echo ""
-#		dd bs=440 count=1 conv=notrunc if="/usr/lib/syslinux/mbr/mbr.bin" of=${1}
-#		echo ""
-#		break
-#	elif [ "${option4}" = "N" ] || [ "${option4}" = "n" ]; then
-#		echo ""
-#		echo "***syslinux NOT written.***"
-#		echo ""
-#		break
-#	fi
-#done
-#}
+install_syslinux(){
+while true; do
+		echo "Would you like to install syslinux to the MBR [Y/N]?"
+		read option4
+	if [ "${option4}" = "Y" ] || [ "${option4}" = "y" ]; then
+		echo ""
+		echo "***Writing syslinux.***"
+		echo ""
+		dd bs=440 count=1 conv=notrunc if="/usr/lib/syslinux/mbr/mbr.bin" of=${1}
+		echo ""
+		break
+	elif [ "${option4}" = "N" ] || [ "${option4}" = "n" ]; then
+		echo ""
+		echo "***syslinux NOT written.***"
+		echo ""
+		break
+	fi
+done
+}
 
 efi_partition(){
 	if [ "$(${thefdisk} -l | grep "${1}1")" != "" ]; then
@@ -243,58 +243,12 @@ efi_partition(){
 				printf "n\np\n1\n\n+256M\nt\nef\nw" | ${thefdisk} ${1}
 
 				${themkfsfat} -F 32 ${1}1
-
-				#make the grub config
-				#echo 'menuentry "Linosx" {' > "grub.cfg"
-				echo 'set root=(hd0,msdos2)' >> "grub.cfg"
-				echo '	linux /vmlinuz root=/dev/sda2 console=tty0 init=/sbin/init modprobe.blacklist=bochs_drm rw' >> "grub.cfg"
-				echo '	initrd /initrd.img' >> "grub.cfg"
-				echo 'boot' >> "grub.cfg"
-				#echo '}' >> "grub.cfg"
-
 				mkdir -p /tmp/installToHDD/efi
 				mount ${1}1 /tmp/installToHDD/efi
-
 				mkdir -p /tmp/installToHDD/efi/EFI/BOOT
 
-				touch /root/overlay
-				#install grub for legacy bios
-				grub-install --boot-directory=/tmp/installToHDD/efi/EFI/BOOT --target=i386-pc ${1}
-				#install grub for EFI
-				grub-install --boot-directory=/tmp/installToHDD/efi/EFI/BOOT --efi-directory=/tmp/installToHDD/efi ${1}1
-
-				##update-grub
-
-				cp -a grub.cfg /tmp/installToHDD/efi/EFI/BOOT/grub/grub.cfg
-
-				if [ -f "/tmp/installToHDD/efi/EFI/debian/grubia32.efi" ]; then
-					cp -a /tmp/installToHDD/efi/EFI/debian/grubia32.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
-				fi
-
-				if [ -f "/tmp/installToHDD/efi/EFI/debian/grubx64.efi" ]; then
-					cp -a /tmp/installToHDD/efi/EFI/debian/grubx64.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTX64.EFI
-				fi
-
-
-				#mkdir -p /tmp/installToHDD/efi/boot/grub/
-				#cp grub.cfg /tmp/installToHDD/efi/boot/grub/grub.cfg
-
-				#grub-install --boot-directory=/mnt/boot --efi-directory=/mnt/boot /dev/sda
-
-				##if [ "${THEARCH}" = "i*86" ]; then
-				##	grub-mkimage -c grub.cfg -o BOOTIA32.EFI -O i386-efi -efi -C xz
-				##	cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
-				##elif [ "${THEARCH}" = "x86_64" ]; then
-				##	#if 64 bit, make it have a 32 bit bootloader as well
-				##	grub-mkimage -c grub.cfg -o BOOTIA32.EFI -O i386-efi -efi -C xz
-				##	cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
-				##	grub-mkimage -c grub.cfg -o BOOTX64.EFI -O ${THEARCH}-efi -efi -C xz
-				##	cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTX64.EFI
-				##fi
-
-
-				#cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTX64.EFI
-				#cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
+				cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTX64.EFI
+				cp -a /isolinux/u-boot-payload.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
 
 				#cp -a /usr/lib/SYSLINUX.EFI/efi64/syslinux.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTX64.EFI
 				#cp -a /usr/lib/SYSLINUX.EFI/efi32/syslinux.efi /tmp/installToHDD/efi/EFI/BOOT/BOOTIA32.EFI
@@ -527,7 +481,7 @@ read option
 	fi
 done
 
-##install_syslinux "${1}"
+install_syslinux "${1}"
 
 if [ "$THEPARTITION" = "" ]; then
 	while true; do
@@ -555,13 +509,6 @@ find . -maxdepth 1 -mindepth 1 -type l | cut -c 2- | grep -v "^/swapfile\|^/.cac
 find . -maxdepth 1 -mindepth 1 -type p | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
 find . -maxdepth 1 -mindepth 1 -type f | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
 find . -maxdepth 2 -mindepth 2 | cut -c 2- | grep -v "^/isolinux/*\|^/swapfile\|^/overlay/*\|^/dev/*\|^/proc/*\|^/sys/*\|^/tmp/*\|^/run/*\|^/mnt/*\|^/media/*\|^/lost+found" | while read line; do cp -a .${line} ${dest}${line}; done
-
-cd "${thepwd}/tempmount"
-#restore permissions
-echo "Setting permissions ..."
-setfacl --restore=saved-permissions 2>/dev/null
-echo "Permissions all set."
-
 cd "${thepwd}"
 
 #FOR EFI
@@ -606,7 +553,7 @@ ln -s /boot/extlinux/extlinux.conf tempmount/boot/syslinux.cfg
 #echo "    TIMEOUT 1" >> tempmount/extlinux/extlinux.conf
 ##OLD BLOCK END
 
-##extlinux --install tempmount/boot
+extlinux --install tempmount/boot
 
 while true; do
 printf "Type the alphanumeric hostname you wish to use for this machine and press return\n(\"-\" characters are also allowed).\n"

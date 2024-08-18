@@ -4,40 +4,66 @@
   <property name="configver" type="int" value="2"/>
   <property name="panels" type="array">
     <value type="int" value="1"/>
+    <property name="dark-mode" type="bool" value="true"/>
     <property name="panel-1" type="empty">
-      <property name="position" type="string" value="p=8;x=683;y=752"/>
+      <property name="position" type="string" value="p=8;x=683;y=754"/>
       <property name="length" type="uint" value="100"/>
       <property name="position-locked" type="bool" value="true"/>
-      <property name="size" type="uint" value="30"/>
+      <property name="icon-size" type="uint" value="16"/>
+      <property name="size" type="uint" value="26"/>
       <property name="plugin-ids" type="array">
         <value type="int" value="1"/>
-        <value type="int" value="3"/>
-        <value type="int" value="15"/>
+        <value type="int" value="2"/>
         <value type="int" value="5"/>
         <value type="int" value="6"/>
-        <value type="int" value="2"/>
-        <value type="int" value="7"/>
+        <value type="int" value="9"/>
+        <value type="int" value="10"/>
+        <value type="int" value="11"/>
+        <value type="int" value="12"/>
+        <value type="int" value="13"/>
+        <value type="int" value="14"/>
+        <value type="int" value="3"/>
       </property>
-      <property name="mode" type="uint" value="0"/>
     </property>
   </property>
   <property name="plugins" type="empty">
-    <property name="plugin-2" type="string" value="actions"/>
-    <property name="plugin-3" type="string" value="tasklist"/>
-    <property name="plugin-15" type="string" value="separator">
-      <property name="expand" type="bool" value="true"/>
-      <property name="style" type="uint" value="0"/>
+    <property name="plugin-1" type="string" value="applicationsmenu">
+      <property name="button-icon" type="string" value="/usr/share/pixmaps/sapphire-round-32x32.png"/>
     </property>
-    <property name="plugin-5" type="string" value="clock">
-      <property name="mode" type="uint" value="2"/>
+    <property name="plugin-2" type="string" value="tasklist">
+      <property name="grouping" type="bool" value="false"/>
+    </property>
+    <property name="plugin-5" type="string" value="separator">
+      <property name="style" type="uint" value="0"/>
+      <property name="expand" type="bool" value="true"/>
     </property>
     <property name="plugin-6" type="string" value="systray">
-      <property name="names-visible" type="array">
-        <value type="string" value="thunar"/>
-        <value type="string" value="wicd-client.py"/>
+      <property name="square-icons" type="bool" value="true"/>
+      <property name="known-legacy-items" type="array">
+        <value type="string" value="connman-gtk"/>
+        <value type="string" value="caja"/>
+        <value type="string" value="hexchat"/>
+        <value type="string" value="vlc"/>
+        <value type="string" value="networkmanager applet"/>
+      </property>
+      <property name="known-items" type="array">
+        <value type="string" value="vlc"/>
+        <value type="string" value="TelegramDesktop"/>
       </property>
     </property>
-    <property name="plugin-7" type="string" value="battery"/>
-    <property name="plugin-1" type="string" value="whiskermenu"/>
+    <property name="plugin-9" type="string" value="power-manager-plugin"/>
+    <property name="plugin-10" type="string" value="notification-plugin"/>
+    <property name="plugin-11" type="string" value="separator">
+      <property name="style" type="uint" value="0"/>
+    </property>
+    <property name="plugin-12" type="string" value="clock"/>
+    <property name="plugin-13" type="string" value="separator">
+      <property name="style" type="uint" value="0"/>
+    </property>
+    <property name="plugin-14" type="string" value="actions"/>
+    <property name="plugin-3" type="string" value="pulseaudio">
+      <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
+      <property name="mpris-players" type="string" value="Dooble.instance13040;Dooble.instance20312;Dooble.instance20450;Dooble.instance21650;Dooble.instance2379;Dooble.instance2499;Dooble.instance2501;Dooble.instance2512;Dooble.instance2765;Dooble.instance3256;Dooble.instance4851;Dooble.instance9982;firefox.instance10048;firefox.instance10187;firefox.instance1024;firefox.instance10296;firefox.instance11795;firefox.instance12190;firefox.instance12512;firefox.instance12851;firefox.instance13129;firefox.instance13619;firefox.instance13656;firefox.instance14106;firefox.instance14344;firefox.instance15615;firefox.instance17240;firefox.instance17305;firefox.instance1731;firefox.instance1735;firefox.instance18815;firefox.instance19257;firefox.instance19598;firefox.instance20927;firefox.instance21667;firefox.instance22197;firefox.instance22319;firefox.instance22423;firefox.instance22799;firefox.instance23693;firefox.instance24026;firefox.instance24189;firefox.instance2538;firefox.instance25610;firefox.instance2629;firefox.instance26359;firefox.instance2646;firefox.instance26748;firefox.instance2693;firefox.instance27019;firefox.instance27954;firefox.instance2949;firefox.instance2956;firefox.instance29956;firefox.instance30097;firefox.instance30901;firefox.instance31015;firefox.instance31594;firefox.instance31624;firefox.instance31654;firefox.instance31838;firefox.instance3191;firefox.instance3209;firefox.instance3716;firefox.instance4083;firefox.instance4940;firefox.instance4957;firefox.instance5155;firefox.instance5343;firefox.instance5405;firefox.instance5529;firefox.instance6901;firefox.instance6905;firefox.instance7103;firefox.instance7173;firefox.instance7391;firefox.instance7745;firefox.instance8187;firefox.instance852;firefox.instance8670;firefox.instance9374;firefox.instance9601;tdesktop;vlc"/>
+    </property>
   </property>
 </channel>

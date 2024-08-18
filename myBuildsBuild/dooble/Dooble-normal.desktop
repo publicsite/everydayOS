@@ -1,0 +1,6 @@
+[Desktop Entry]
+Categories=Network;WebBrowser;
+Type=Application
+Terminal=false
+Exec=/usr/bin/Dooble-normal.sh %U
+Name=Dooble (Normal)

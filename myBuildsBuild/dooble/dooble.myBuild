@@ -24,6 +24,9 @@ do_build(){
 
 cd "${myBuildExtractDest}/${filename}"
 
+sed -i "s#-Wdangling-reference ##g" dooble.pro
+sed -i "s#-Wdangling-reference ##g" Makefile
+
 qmake -o Makefile dooble.pro
 make
 
@@ -33,7 +36,49 @@ return "$?"
 do_install(){
 #here you put the installation commands, like make install
 cd "${myBuildExtractDest}/${filename}"
-make DESTDIR=${SYSROOT} install
+
+mkdir -p "${SYSROOT}/usr/share/applications"
+
+cp Dooble "${SYSROOT}/usr/bin/"
+cp -a qtwebengine_dictionaries "${SYSROOOT}/usr/bin/"
+
+cp "${myBuildsDir}/dooble/Dooble-logins.sh" "${SYSROOT}/usr/bin/"
+cp "${myBuildsDir}/dooble/Dooble-normal.sh" "${SYSROOT}/usr/bin/"
+
+cp "${myBuildsDir}/dooble/Dooble-logins.desktop" "${SYSROOT}/usr/share/applications/"
+cp "${myBuildsDir}/dooble/Dooble-normal.desktop" "${SYSROOT}/usr/share/applications/"
+#normal
+mkdir -p "${SYSROOT}/home/user/.dooble-normal/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/home/user/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/home/user/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/home/user/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+mkdir -p "${SYSROOT}/etc/skel/.dooble-normal/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/etc/skel/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/etc/skel/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/etc/skel/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+
+mkdir -p "${SYSROOT}/root/.dooble-normal/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/root/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/root/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/root/.dooble-normal/WebEnginePersistentStorage/Local\ Storage"
+
+#login
+mkdir -p "${SYSROOT}/home/user/.dooble-login/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/home/user/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/home/user/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/home/user/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+
+mkdir -p "${SYSROOT}/etc/skel/.dooble-login/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/etc/skel/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/etc/skel/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/etc/skel/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+
+mkdir -p "${SYSROOT}/root/.dooble-login/WebEnginePersistentStorage"
+mkdir -p "${SYSROOT}/root/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chown root:root "${SYSROOT}/root/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+chmod aug-w "${SYSROOT}/root/.dooble-login/WebEnginePersistentStorage/Local\ Storage"
+
+#make DESTDIR=${SYSROOT} install
 return "$?"
 }
 

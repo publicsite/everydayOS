@@ -19,10 +19,10 @@ cp installToHDD.sh rootfs/sbin/
 sed -i "s/THEARCHTOREPLACE/${THEARCH}/g" "rootfs/sbin/installToHDD.sh"
 chmod +x rootfs/sbin/installToHDD.sh
 
-cp init-overlay.sh rootfs/sbin/
-chmod +x rootfs/sbin/init-overlay.sh
+cp initOverlay.sh rootfs/sbin/initOverlay.sh
+chmod +x rootfs/sbin/initOverlay.sh
 
-#these dirs are required for init-overlay.sh script
+#these dirs are required for initOverlay.sh script
 mkdir rootfs/overlay
 mkdir rootfs/overlay/tmpfs
 mkdir rootfs/overlay/mountpoint
@@ -47,7 +47,7 @@ mkdir tempmount
 ##cp extractdest/efilinux-1.1/efilinux.efi tempmount/EFI/BOOT/BOOTX64.EFI
 
 ###console=ttyS0
-##printf "%s 0:%svmlinuz initrd=0:\\initrd.img root=LABEL=%s init=/sbin/init-overlay.sh\n" "-f" "\\" "${THELABEL}" > tempmount/EFI/BOOT/efilinux.cfg
+##printf "%s 0:%svmlinuz initrd=0:\\initrd.img root=LABEL=%s init=/sbin/initOverlay.sh\n" "-f" "\\" "${THELABEL}" > tempmount/EFI/BOOT/efilinux.cfg
 
 ##umount tempmount
 
@@ -72,7 +72,7 @@ echo "label 1" >> rootfs/isolinux/syslinux.cfg
 echo "    MENU LABEL Devuan testing" >> rootfs/isolinux/syslinux.cfg
 #setting the path to the symlink /vmlinux doesn't work
 echo "    KERNEL /boot/$(basename "$(find rootfs/boot/vmlinuz-*)")" >> rootfs/isolinux/syslinux.cfg
-echo "    APPEND initrd=/boot/$(basename "$(find rootfs/boot/initrd.img*)") root=LABEL=${THELABEL} init=/sbin/init-overlay.sh" >> rootfs/isolinux/syslinux.cfg
+echo "    APPEND initrd=/boot/$(basename "$(find rootfs/boot/initrd.img*)") root=LABEL=${THELABEL} init=/sbin/initOverlay.sh" >> rootfs/isolinux/syslinux.cfg
 echo "    TIMEOUT 1" >> rootfs/isolinux/syslinux.cfg
 
 sudo cp -a "rootfs" topack
@@ -81,11 +81,11 @@ sudo mv "topack" rootfs/
 
 #this config is for GRUB2
 echo 'menuentry "I am booting from USB" {' > "grub.cfg"
-echo '	linux /vmlinuz root=/dev/sdb1 console=tty0 init=/sbin/init-overlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
+echo '	linux /vmlinuz root=/dev/sdb1 console=tty0 init=/sbin/initOverlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
 echo '	initrd /initrd.img' >> "grub.cfg"
 echo '}' >> "grub.cfg"
 echo 'menuentry "I am booting from DVD" {' >> "grub.cfg"
-echo '	linux /vmlinuz root=/dev/sr0 console=tty0 init=/sbin/init-overlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
+echo '	linux /vmlinuz root=/dev/sr0 console=tty0 init=/sbin/initOverlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
 echo '	initrd /initrd.img' >> "grub.cfg"
 echo '}' >> "grub.cfg"
 sudo mkdir -p "rootfs/topack/boot/grub"

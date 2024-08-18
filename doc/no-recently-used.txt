@@ -1,0 +1,23 @@
+making a dummy file and setting permissions does not work, even as root.
+
+To disable the list for GTK 3 based applications follow these steps:
+
+rm ~/.local/share/recently-used.xbel
+If THERE ISN'T a "~/.config/gtk-3.0/settings.ini", then
+
+mkdir -p ~/.config/gtk-3.0
+    echo -e "[Settings]\ngtk-recent-files-max-age=0\ngtk-recent-files-limit=0" > ~/.config/gtk-3.0/settings.ini
+If THERE IS a "~/.config/gtk-3.0/settings.ini", then
+
+echo -e "\ngtk-recent-files-max-age=0\ngtk-recent-files-limit=0" >> ~/.config/gtk-3.0/settings.ini
+(note the ">>" vs the ">" difference ; ">>" appends to a file while a single ">" completely overwrites it, without backup, if it already exists)
+
+And in either case:
+
+rm ~/.local/share/recently-used.xbel
+To disable the list for GTK 2 based applications follow this step:
+
+echo gtk-recent-files-max-age=0 >> ~/.gtkrc-2.0
+These steps are better than changing permissions on the file as they prevent error messages from being shown when launching GTK based applications that rely on the file.
+
+Detailed information can be found here - https://alexcabal.com/disabling-gnomes-recently-used-file-list-the-better-way/

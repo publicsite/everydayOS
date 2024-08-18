@@ -1,0 +1,6 @@
+[Desktop Entry]
+Categories=Network;WebBrowser;
+Type=Application
+Terminal=false
+Exec=/usr/bin/Dooble-logins.sh %U
+Name=Dooble (Logins)

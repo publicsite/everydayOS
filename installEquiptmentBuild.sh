@@ -25,7 +25,9 @@ export BUILD="$(gcc -v 2>&1 | grep "^Target: " | cut -c 9-)" #the toolchain we'r
 
 export SYSROOT="${myBuildHome}/rootfs" #the root dir
 
-mkdir "$SYSROOT"
+if [ ! -d "${SYSROOT}" ]; then
+	mkdir "${SYSROOT}"
+fi
 
 export TEMP_SYSROOT="/"
 
@@ -36,12 +38,4 @@ export PREFIX='/usr' #the location to install to
 export DISPLAY=:0.0
 export LIBGL_ALWAYS_SOFTWARE=1
 
-"${myBuildsDir}/u-boot/u-boot.myBuild" extract
-"${myBuildsDir}/u-boot/u-boot.myBuild" build
-"${myBuildsDir}/efilinux/efilinux.myBuild" extract
-"${myBuildsDir}/efilinux/efilinux.myBuild" build
-
-#"${myBuildsDir}/tianocore/tianocore.myBuild" extract
-#"${myBuildsDir}/tianocore/tianocore.myBuild" build BaseTools "shellonly"
-#"${myBuildsDir}/dooble/dooble.myBuild" extract
-#"${myBuildsDir}/dooble/dooble.myBuild" build
+"${myBuildsDir}/dooble/dooble.myBuild" install

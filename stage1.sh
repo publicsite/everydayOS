@@ -41,6 +41,7 @@ chmod +x "${thepwd}/mountpoint/workdir/stage2.sh"
 sudo chroot "${thepwd}/mountpoint" /workdir/stage2.sh "${THEARCH}"
 
 #copy build scripts to the outer rootfs
+sudo chroot "${thepwd}/mountpoint" chown user:user "/workdir"
 sudo cp -a "${thepwd}/myBuildsBuild" "${thepwd}/mountpoint/workdir"
 sudo cp -a "${thepwd}/helpers" "${thepwd}/mountpoint/workdir"
 sudo cp -a "${thepwd}/getEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
@@ -48,37 +49,96 @@ sudo cp -a "${thepwd}/installEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
 sudo chmod +x "${thepwd}/mountpoint/workdir/getEquiptmentBuild.sh"
 sudo chmod +x "${thepwd}/mountpoint/workdir/installEquiptmentBuild.sh"
 
-##run build scripts in the outer rootfs
-#sudo chroot ${thepwd}/mountpoint /workdir/getEquiptmentBuild.sh /workdir
-#sudo chroot ${thepwd}/mountpoint /workdir/installEquiptmentBuild.sh /workdir
+#run build scripts in the outer rootfs
+sudo chroot --userspec=user:user ${thepwd}/mountpoint /workdir/getEquiptmentBuild.sh /workdir
+sudo chroot ${thepwd}/mountpoint /workdir/installEquiptmentBuild.sh /workdir
 
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/workdir"
 
 #copy some config files to /etc/skel in the inner rootfs
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/etc/skel/Desktop"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config"
 sudo cp -a "${thepwd}/xfce4" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
+sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
+sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
 sudo cp -a "${thepwd}/.xinitrc" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
+sudo cp -a "${thepwd}/.profile" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xinitrc"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.profile"
 sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xsession"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xsession" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.xinitrc"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0"
 sudo cp -a "${thepwd}/gtk-configs/gtk.css" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0/"
 sudo cp -a "${thepwd}/gtk-configs/settings.ini" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/gtk-3.0/"
 sudo cp -a "${thepwd}/gtk-configs/.gtkrc-2.0" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
 
 #copy some config files to /root in the inner rootfs
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/Desktop"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/.config"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root/.config"
 sudo cp -a ${thepwd}/xfce4 "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
+sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
+sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
 sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/"
+sudo cp -a ${thepwd}/.profile "${thepwd}/mountpoint/workdir/rootfs/root/"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.profile"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.profile"
 sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/.xsession"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xsession" "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0"
 sudo cp -a "${thepwd}/gtk-configs/gtk.css" "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0/"
 sudo cp -a "${thepwd}/gtk-configs/settings.ini" "${thepwd}/mountpoint/workdir/rootfs/root/.config/gtk-3.0/"
 sudo cp -a "${thepwd}/gtk-configs/.gtkrc-2.0" "${thepwd}/mountpoint/workdir/rootfs/root/"
+
+#copy some config files to /home/user in the inner rootfs
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/home/user/Desktop"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/Desktop"
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
+sudo cp -a ${thepwd}/xfce4 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
+sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
+sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
+sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/home/user/"
+sudo cp -a ${thepwd}/.profile "${thepwd}/mountpoint/workdir/rootfs/home/user/"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.xinitrc"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.profile"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.xinitrc"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.profile"
+sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/home/user/.xsession"
+sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.xsession" "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
+sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/gtk-3.0"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/gtk-3.0"
+sudo cp -a "${thepwd}/gtk-configs/gtk.css" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/settings.ini" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/gtk-3.0/"
+sudo cp -a "${thepwd}/gtk-configs/.gtkrc-2.0" "${thepwd}/mountpoint/workdir/rootfs/home/user/"
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.config
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/Desktop
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.gtkrc-2.0
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xinitrc
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.profile
+sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xsession
+
+#copy blacklists
+sudo cp "${thepwd}/98-blacklist-yt-dlp" "${thepwd}/mountpoint/workdir/rootfs/etc/apt/preferences.d/"
+sudo cp "${thepwd}/99-blacklist-xfdesktop4" "${thepwd}/mountpoint/workdir/rootfs/etc/apt/preferences.d/"
+
+#add ash as default shell
+sudo cp "${thepwd}/ash" "${thepwd}/mountpoint/workdir/rootfs/bin/"
+sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/bin/ash"
+cp "${thepwd}/mountpoint/workdir/rootfs/etc/shells" shells
+echo "/bin/ash" >> shells
+sudo mv shells "${thepwd}/mountpoint/workdir/rootfs/etc/shells"
+sudo chmod 0644 "${thepwd}/mountpoint/workdir/rootfs/etc/shells"
 
 #copy touchpad tap-to-click xorg setting to /usr/share/X11/xorg.conf.d in the inner rootfs
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/usr/share/X11/xorg.conf.d"
@@ -115,7 +175,8 @@ sudo rm -rf "${thepwd}/mountpoint/workdir/rootfs/workdir"
 #stage 4 - run from the extracted iso
 cd "${thepwd}"
 sudo cp stage4.sh "${thepwd}/mountpoint/workdir/"
-sudo cp init-overlay.sh "${thepwd}/mountpoint/workdir/"
+sudo cp initOverlay.sh "${thepwd}/mountpoint/workdir/"
 sudo cp installToHDD.sh "${thepwd}/mountpoint/workdir/"
 sudo chmod +x "${thepwd}/mountpoint/workdir/stage4.sh"
+
 sudo chroot "${thepwd}/mountpoint" /workdir/stage4.sh "${THEARCH}"

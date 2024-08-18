@@ -1,0 +1,7 @@
+copy ash to /bin/ash
+
+edit /etc/shells and add
+
+/bin/ash -l
+
+as a shell

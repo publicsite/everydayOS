@@ -1,0 +1,4 @@
+copy the 98-blacklist and 99-blacklist file to /etc/apt/preferences.d
+
+the xfce4 desktop blacklist is to prevent out of bounds memory usage shown by rkhunter
+the yt-dlp blacklist is because we use upstream version of yt-dlp

@@ -1,0 +1,2 @@
+copy .profile and .xinitrc to ${HOME}
+link .xsession to .xinitrc

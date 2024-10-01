@@ -80,20 +80,17 @@ sudo mv "topack" rootfs/
 ##sudo rm -f "rootfs/topack/qemu-ppc-static"
 
 #this config is for GRUB2
-echo 'menuentry "I am booting from USB" {' > "grub.cfg"
-echo '	linux /vmlinuz root=/dev/sdb1 console=tty0 init=/sbin/initOverlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
+echo 'menuentry "Beam me up, scotty!" {' > "grub.cfg"
+echo 'search --no-floppy --set=root --label '${THELABEL} >> "grub.cfg"
+echo '	linux /vmlinuz root=LABEL='${THELABEL}' console=tty0 init=/sbin/initOverlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
 echo '	initrd /initrd.img' >> "grub.cfg"
 echo '}' >> "grub.cfg"
-echo 'menuentry "I am booting from DVD" {' >> "grub.cfg"
-echo '	linux /vmlinuz root=/dev/sr0 console=tty0 init=/sbin/initOverlay.sh modprobe.blacklist=bochs_drm' >> "grub.cfg"
-echo '	initrd /initrd.img' >> "grub.cfg"
-echo '}' >> "grub.cfg"
-sudo mkdir -p "rootfs/topack/boot/grub"
-sudo mv "grub.cfg" "rootfs/topack/boot/grub/grub.cfg"
+mkdir -p "rootfs/topack/boot/grub"
+mv "grub.cfg" "rootfs/topack/boot/grub/grub.cfg"
 
 #WRITE ISO
 
-sudo chroot "rootfs" /usr/bin/grub-mkrescue -o everydayOS-${1}.iso /topack
+chroot "rootfs" /usr/bin/grub-mkrescue -o everydayOS-${1}.iso /topack --iso-level 3 -V $THELABEL
 
 sudo mv "rootfs/everydayOS-${1}.iso" ./
 

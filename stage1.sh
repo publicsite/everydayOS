@@ -62,7 +62,6 @@ sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config"
 sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config"
 sudo cp -a "${thepwd}/xfce4" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
-sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
 sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/.config/"
 sudo cp -a "${thepwd}/.xinitrc" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
 sudo cp -a "${thepwd}/.profile" "${thepwd}/mountpoint/workdir/rootfs/etc/skel/"
@@ -83,12 +82,9 @@ sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/root/.config"
 sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/root/.config"
 sudo cp -a ${thepwd}/xfce4 "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
-sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
 sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/root/.config/"
 sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/"
 sudo cp -a ${thepwd}/.profile "${thepwd}/mountpoint/workdir/rootfs/root/"
-sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
-sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.profile"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.xinitrc"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/root/.profile"
 sudo ln -s .xinitrc "${thepwd}/mountpoint/workdir/rootfs/root/.xsession"
@@ -106,7 +102,6 @@ sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
 sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
 sudo cp -a ${thepwd}/xfce4 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
-sudo cp -a "${thepwd}/sakura" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
 sudo cp -a "${thepwd}/spacefm" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
 sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/home/user/"
 sudo cp -a ${thepwd}/.profile "${thepwd}/mountpoint/workdir/rootfs/home/user/"
@@ -127,10 +122,6 @@ sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/
 sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xinitrc
 sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.profile
 sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xsession
-
-#copy blacklists
-sudo cp "${thepwd}/98-blacklist-yt-dlp" "${thepwd}/mountpoint/workdir/rootfs/etc/apt/preferences.d/"
-sudo cp "${thepwd}/99-blacklist-xfdesktop4" "${thepwd}/mountpoint/workdir/rootfs/etc/apt/preferences.d/"
 
 #add ash as default shell
 sudo cp "${thepwd}/ash" "${thepwd}/mountpoint/workdir/rootfs/bin/"

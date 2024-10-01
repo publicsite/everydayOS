@@ -52,6 +52,142 @@ apt-get -y autoremove  exim4-config exim4-base exim4-daemon-light exim4-config-2
 #update the system
 apt-get -y update && apt-get -y upgrade
 
+##====BLACKLIST STARTS HERE===##
+#note, we are lenient on firmware
+
+blacklist()
+{
+#function for blacklisting
+echo "Package: ${1}" > "/etc/apt/preferences.d/99-blacklist-${1}"
+echo 'Pin: release *' >> "/etc/apt/preferences.d/99-blacklist-${1}"
+echo 'Pin-Priority: -1' >> "/etc/apt/preferences.d/99-blacklist-${1}"
+}
+
+#we blacklist these in addition
+#we use our own yt-dlp
+blacklist "yt-dlp"
+#buggy so removed
+blacklist "xfdesktop4"
+
+#based off of https://trisquel.info/en/wiki/software-does-not-respect-free-system-distribution-guidelines
+blacklist "boinc"
+blacklist "boinc-app-seti"
+blacklist "debian-reference"
+blacklist "konqueror"
+blacklist "lucida"
+blacklist "icedove"
+blacklist "thunderbird"
+blacklist "xchat"
+blacklist "a2ps-perl-ja"
+blacklist "acetoneiso"
+blacklist "aee"
+blacklist "afio"
+blacklist "app-install-data-commercial"
+blacklist "starfighter"
+blacklist "bnetd"
+blacklist "chromium-browser"
+blacklist "d4x"
+blacklist "dosemu"
+blacklist "ee"
+blacklist "envyng-core"
+blacklist "envyng-gtk"
+blacklist "envyng-qt"
+blacklist "gnome-app-install"
+blacklist "gstreamer0.10-pitfdll"
+blacklist "helix-player"
+blacklist "iceape"
+blacklist "iceweasel"
+blacklist "isdnutils"
+blacklist "ivman"
+blacklist "jockey"
+blacklist "libxprintapputil"
+blacklist "mame"
+blacklist "mesademos"
+blacklist "mol"
+blacklist "mol-drivers-linux"
+blacklist "mac"
+blacklist "moon"
+blacklist "mp32ogg"
+blacklist "ndiswrapper"
+blacklist "ndisgtk"
+blacklist "nikto"
+blacklist "openoffice.org"
+blacklist "pvpgn"
+blacklist "rman"
+blacklist "scribus-ng-doc"
+blacklist "seamonkey"
+blacklist "simutrans"
+blacklist "simutrans-pak64"
+blacklist "simutrans-pak128.britain"
+blacklist "testdrive"
+blacklist "kubuntu-meta"
+blacklist "ubuntu-meta"
+blacklist "unetbootin"
+blacklist "unrar-nonfree"
+blacklist "virtualbox-guest-additions-iso"
+blacklist "vrms"
+blacklist "xv"
+
+#additional packages from https://github.com/trisquelgnulinux/ubuntu-purge/blob/master/purge-bionic
+#reason for these packages being blacklisted in trisquel isn't clear
+blacklist "9menu"
+blacklist "app-install-data-partner"
+blacklist "bibledit"
+blacklist "bible-kjv"
+blacklist "biblememorizer"
+blacklist "bibletime"
+blacklist "biblesync"
+blacklist "bumblebee"
+blacklist "chromium-codecs-ffmpeg"
+blacklist "easycrypt"
+blacklist "efilinux-signed"
+blacklist "emacs23"
+blacklist "flashplugin-nonfree"
+blacklist "fonts-ubuntu-title"
+blacklist "freesci"
+blacklist "gdecrypt"
+blacklist "gnome-speech"
+blacklist "grub2-signed"
+blacklist "kde-config-whoopsie"
+blacklist "kubuntu-firefox-installer"
+blacklist "kubuntu-driver-manager"
+blacklist "libubuntuone"
+blacklist "maptransfer"
+blacklist "maptransfer-server"
+blacklist "nvclock"
+blacklist "ophcrack"
+blacklist "origami"
+blacklist "pipsi"
+blacklist "pypibrowser"
+blacklist "qsampler"
+blacklist "qstat"
+blacklist "rhythmbox-ubuntuone-music-store"
+blacklist "scribus-doc"
+blacklist "shim-signed"
+blacklist "simutrans-data"
+blacklist "simutrans-makeobj"
+blacklist "smtube"
+blacklist "software-center"
+blacklist "snapd"
+blacklist "snapd-xdg-open"
+blacklist "sweethome3d-furniture-nonfree"
+blacklist "tatan"
+blacklist "torbrowser-launcher"
+blacklist "ubuntu-advantage-tools"
+blacklist "ubuntu-drivers-common"
+blacklist "ubuntu-online-tour"
+blacklist "ubuntuone-client"
+blacklist "ubuntuone-dev-tools"
+blacklist "ubuntuone-storage-protocol"
+blacklist "ubuntu-download-manager"
+blacklist "ubuntu-restricted-extras"
+blacklist "w9wm"
+blacklist "xdrawchem"
+blacklist "xqf"
+
+##====BLACKLIST ENDS HERE===##
+
+
 if [ "$THEARCH" = "i*86" ] || [ "$THEARCH" = "x86_64" ]; then
 apt-get -m -y install grub-efi-ia32
 fi
@@ -90,7 +226,6 @@ claws-mail \
 firmware-linux-free \
 grub2 xorriso mtools \
 busybox \
-sakura \
 spacefm \
 dialect \
 acl \
@@ -100,6 +235,7 @@ python3-pip
 
 apt-get -m -y install --no-install-recommends \
 "$2" \
+gnome-terminal \
 live-task-base \
 xfce4-panel \
 xfce4-pulseaudio-plugin \

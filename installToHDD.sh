@@ -491,6 +491,7 @@ read option14
 		break
 	fi
 done
+sleep 1
 
 while true; do
 ${thefdisk} -l "$1"
@@ -508,6 +509,7 @@ read option11
 		break
 	fi
 done
+sleep 1
 
 while true; do
 ${thefdisk} -l "$1"
@@ -526,6 +528,7 @@ read option
 		break
 	fi
 done
+sleep 1
 
 ##install_syslinux "${1}"
 
@@ -543,17 +546,25 @@ mkdir tempmount
 
 mount "$THEPARTITION" tempmount
 
+sleep 1
+
 echo "*** Copying the files ***"
 
 #copy the files
 dest="${thepwd}/tempmount"
 cd /
 find . -maxdepth 1 -mindepth 1 -type d | cut -c 2- | while read line; do mkdir -p ${dest}${line}; chmod "$(stat -c '%a' .${line})" ${dest}${line}; chown "$(stat -c "%U:%G" .${line})" ${dest}${line}; done
+sleep 1
 find . -maxdepth 1 -mindepth 1 -type b | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+sleep 1
 find . -maxdepth 1 -mindepth 1 -type c | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+sleep 1
 find . -maxdepth 1 -mindepth 1 -type l | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+sleep 1
 find . -maxdepth 1 -mindepth 1 -type p | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+sleep 1
 find . -maxdepth 1 -mindepth 1 -type f | cut -c 2- | grep -v "^/swapfile\|^/.cache\|^/overlay" | while read line; do cp -a .${line} ${dest}${line}; done
+sleep 1
 find . -maxdepth 2 -mindepth 2 | cut -c 2- | grep -v "^/isolinux/*\|^/swapfile\|^/overlay/*\|^/dev/*\|^/proc/*\|^/sys/*\|^/tmp/*\|^/run/*\|^/mnt/*\|^/media/*\|^/lost+found" | while read line; do cp -a .${line} ${dest}${line}; done
 
 cd "${thepwd}/tempmount"

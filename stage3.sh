@@ -57,10 +57,12 @@ apt-get -y update && apt-get -y upgrade
 
 blacklist()
 {
+
+outname="$(printf "99-blacklist-%s" "${1}" | tr -d .)"
 #function for blacklisting
-echo "Package: ${1}" > "/etc/apt/preferences.d/99-blacklist-${1}"
-echo 'Pin: release *' >> "/etc/apt/preferences.d/99-blacklist-${1}"
-echo 'Pin-Priority: -1' >> "/etc/apt/preferences.d/99-blacklist-${1}"
+echo "Package: ${1}" > "/etc/apt/preferences.d/${outname}"
+echo 'Pin: release *' >> "/etc/apt/preferences.d/${outname}"
+echo 'Pin-Priority: -1' >> "/etc/apt/preferences.d/${outname}"
 }
 
 #we blacklist these in addition
@@ -235,7 +237,7 @@ python3-pip
 
 apt-get -m -y install --no-install-recommends \
 "$2" \
-gnome-terminal \
+gnome-console \
 live-task-base \
 xfce4-panel \
 xfce4-pulseaudio-plugin \

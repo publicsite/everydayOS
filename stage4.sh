@@ -7,7 +7,7 @@ mount none -t sysfs /sys
 mkdir -p /dev/pts
 mount none -t devpts /dev/pts
 
-THELABEL="DEVUANCUSTOM"
+THELABEL="EVERYDAYOS"
 
 #enter directory containing this script
 cd $(dirname $(realpath $0))
@@ -53,30 +53,34 @@ mkdir tempmount
 
 #MBR
 
-mkdir -p rootfs/isolinux
-cp -a /usr/lib/ISOLINUX/isolinux.bin rootfs/isolinux/
-cp -a /usr/lib/syslinux/modules/bios/ldlinux.c32 rootfs/isolinux/
+#mkdir -p rootfs/isolinux
+#cp -a /usr/lib/ISOLINUX/isolinux.bin rootfs/isolinux/
+#cp -a /usr/lib/syslinux/modules/bios/ldlinux.c32 rootfs/isolinux/
 ##cp -a efiboot-new.img rootfs/isolinux/efiboot.img
-mkdir rootfs/kernel
-cp -a /usr/lib/syslinux/memdisk rootfs/kernel #copy bios/memdisk/memdisk
+#mkdir rootfs/kernel
+#cp -a /usr/lib/syslinux/memdisk rootfs/kernel #copy bios/memdisk/memdisk
 
 #although u-boot doesn't work for the cdrom, we use it in the installer
 ##cp -a extractdest/u-boot-*/u-boot-payload.efi rootfs/isolinux/
 
-#this config is for ISOLINUX
-echo "MENU TITLE Boot Menu" > rootfs/isolinux/syslinux.cfg
-echo "PROMPT 1" >> rootfs/isolinux/syslinux.cfg
-echo "DEFAULT 1" >> rootfs/isolinux/syslinux.cfg
-echo "" >> rootfs/isolinux/syslinux.cfg
-echo "label 1" >> rootfs/isolinux/syslinux.cfg
-echo "    MENU LABEL Devuan testing" >> rootfs/isolinux/syslinux.cfg
-#setting the path to the symlink /vmlinux doesn't work
-echo "    KERNEL /boot/$(basename "$(find rootfs/boot/vmlinuz-*)")" >> rootfs/isolinux/syslinux.cfg
-echo "    APPEND initrd=/boot/$(basename "$(find rootfs/boot/initrd.img*)") root=LABEL=${THELABEL} init=/sbin/initOverlay.sh" >> rootfs/isolinux/syslinux.cfg
-echo "    TIMEOUT 1" >> rootfs/isolinux/syslinux.cfg
+##this config is for ISOLINUX
+#echo "MENU TITLE Boot Menu" > rootfs/isolinux/syslinux.cfg
+#echo "PROMPT 1" >> rootfs/isolinux/syslinux.cfg
+#echo "DEFAULT 1" >> rootfs/isolinux/syslinux.cfg
+#echo "" >> rootfs/isolinux/syslinux.cfg
+#echo "label 1" >> rootfs/isolinux/syslinux.cfg
+#echo "    MENU LABEL Devuan testing" >> rootfs/isolinux/syslinux.cfg
+##setting the path to the symlink /vmlinux doesn't work
+#echo "    KERNEL /boot/$(basename "$(find rootfs/boot/vmlinuz-*)")" >> rootfs/isolinux/syslinux.cfg
+#echo "    APPEND initrd=/boot/$(basename "$(find rootfs/boot/initrd.img*)") root=LABEL=${THELABEL} init=/sbin/initOverlay.sh" >> rootfs/isolinux/syslinux.cfg
+#echo "    TIMEOUT 1" >> rootfs/isolinux/syslinux.cfg
 
-sudo cp -a "rootfs" topack
-sudo mv "topack" rootfs/
+if [ -d "$PWD/topack" ]; then
+	rm -rf "$PWD/topack"
+fi
+
+cp -a "rootfs" topack
+mv "topack" rootfs/
 ##sudo rm -f "rootfs/topack/qemu-ppc-static"
 
 #this config is for GRUB2
@@ -92,9 +96,9 @@ mv "grub.cfg" "rootfs/topack/boot/grub/grub.cfg"
 
 chroot "rootfs" /usr/bin/grub-mkrescue -o everydayOS-${1}.iso /topack --iso-level 3 -V $THELABEL
 
-sudo mv "rootfs/everydayOS-${1}.iso" ./
+mv "rootfs/everydayOS-${1}.iso" ./
 
-sudo rm -rf "rootfs/topack"
+rm -rf "rootfs/topack"
 
 ##xorriso -as mkisofs \
 ##  -o devuan-custom-${1}.iso \

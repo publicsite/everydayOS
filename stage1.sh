@@ -135,13 +135,13 @@ sudo cp -a "${thepwd}/local/share/xfce4/helpers/custom-TerminalEmulator.desktop"
 sudo chmod 0644 "${thepwd}/mountpoint/workdir/rootfs/home/user/.local/share/xfce4/helpers/custom-FileManager.desktop"
 sudo chmod 0644 "${thepwd}/mountpoint/workdir/rootfs/home/user/.local/share/xfce4/helpers/custom-TerminalEmulator.desktop"
 
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.config
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/Desktop
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.gtkrc-2.0
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xinitrc
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.profile
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.xsession
-sudo chroot "${thepwd}/mountpoint/workdir/rootfs" chown -R user:user /home/user/.local
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.config
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/Desktop
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.gtkrc-2.0
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.xinitrc
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.profile
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.xsession
+sudo chroot "${thepwd}/mountpoint" chown -R user:user /workdir/rootfs/home/user/.local
 
 #add ash as default shell
 sudo cp "${thepwd}/ash" "${thepwd}/mountpoint/workdir/rootfs/bin/"

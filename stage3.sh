@@ -228,7 +228,7 @@ claws-mail \
 firmware-linux-free \
 grub2 xorriso mtools \
 busybox \
-spacefm \
+thunar \
 dialect \
 acl \
 python3-pip
@@ -237,7 +237,7 @@ python3-pip
 
 apt-get -m -y install --no-install-recommends \
 "$2" \
-gnome-console \
+xfce4-terminal \
 live-task-base \
 xfce4-panel \
 xfce4-pulseaudio-plugin \

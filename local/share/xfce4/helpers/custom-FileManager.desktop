@@ -4,8 +4,8 @@ Version=1.0
 Encoding=UTF-8
 Type=X-XFCE-Helper
 X-XFCE-Category=FileManager
-X-XFCE-CommandsWithParameter=spacefm %s
-Icon=spacefm
-Name=spacefm
-X-XFCE-Commands=spacefm
+X-XFCE-CommandsWithParameter=thunar %s
+Icon=thunar
+Name=thunar
+X-XFCE-Commands=thunar
 

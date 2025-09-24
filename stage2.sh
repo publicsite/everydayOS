@@ -32,9 +32,9 @@ chmod -Rv 700 /var/cache/apt/archives/partial/
 
 chown -Rv devuan:devuan /var/cache/apt/archives/partial/
 
-##sudo sed -i "s/deb.devuan.org/pkgmaster.devuan.org/g" /etc/apt/sources.list
+sudo sed -i "s/deb.devuan.org/gb.deb.devuan.org/g" /etc/apt/sources.list
 
-THEMIRROR="http://deb.devuan.org/merged"
+THEMIRROR="http://gb.deb.devuan.org/merged"
 
 mkdir "${PWD}/rootfs"
 
@@ -52,7 +52,7 @@ apt-get -m -y install gnu-efi
 apt-get -m -y install acl
 
 #for dooble
-sudo apt-get -m -y install make g++ qt5-qmake qtbase5-dev libqt5charts5 libqt5charts5-dev libqt5qml5 libqt5webenginewidgets5 qtwebengine5-dev libqt5webengine5 qtwebengine5-dev-tools
+#sudo apt-get -m -y install make g++ qt5-qmake qtbase5-dev libqt5charts5 libqt5charts5-dev libqt5qml5 libqt5webenginewidgets5 qtwebengine5-dev libqt5webengine5 qtwebengine5-dev-tools
 
 ###for tianocore
 ##apt-get -m -y install uuid-dev python3 python-is-python3 nasm

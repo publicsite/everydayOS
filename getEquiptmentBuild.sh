@@ -53,6 +53,6 @@ export PREFIX='/usr' #the location to install to
 #"${myBuildsDir}/tianocore/tianocore.myBuild" extract
 #"${myBuildsDir}/tianocore/tianocore.myBuild" build BaseTools "shellonly"
 
-"${myBuildsDir}/dooble/dooble.myBuild" get
-"${myBuildsDir}/dooble/dooble.myBuild" extract
-"${myBuildsDir}/dooble/dooble.myBuild" build
+#"${myBuildsDir}/dooble/dooble.myBuild" get
+#"${myBuildsDir}/dooble/dooble.myBuild" extract
+#"${myBuildsDir}/dooble/dooble.myBuild" build

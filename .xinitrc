@@ -1,6 +1,6 @@
 #!/bin/sh
 openbox &
 xfce4-panel &
+cbatticon &
 connman-gtk --tray &
-spacefm --desktop &
 exec xfce4-session

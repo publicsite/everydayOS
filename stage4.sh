@@ -19,6 +19,12 @@ cp installToHDD.sh rootfs/sbin/
 sed -i "s/THEARCHTOREPLACE/${THEARCH}/g" "rootfs/sbin/installToHDD.sh"
 chmod +x rootfs/sbin/installToHDD.sh
 
+cp resetInstallation.sh rootfs/sbin/
+chmod +x rootfs/sbin/resetInstallation.sh
+
+cp swapout_rootfs.sh rootfs/sbin/
+chmod +x rootfs/sbin/swapout_rootfs.sh
+
 cp initOverlay.sh rootfs/sbin/initOverlay.sh
 chmod +x rootfs/sbin/initOverlay.sh
 

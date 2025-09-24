@@ -197,14 +197,20 @@ fi
 apt-get -m -y install efibootmgr \
 task-laptop \
 task-english \
-alsa-utils \
 sysvinit-core \
 sysv-rc \
 live-config-sysvinit \
-xdg-utils \
 xorg \
 xserver-xorg-input-all \
 xserver-xorg-video-all \
+
+#install xfce4-terminal before apt gets a chance to install other x terminal like zutty or whatever else...
+apt-get -m -y install --no-install-recommends xfce4-terminal
+
+apt-get -m -y install \
+firefox-esr \
+xdg-utils \
+alsa-utils \
 va-driver-all openbox \
 obconf \
 pulseaudio \
@@ -227,11 +233,12 @@ htop \
 claws-mail \
 firmware-linux-free \
 grub2 xorriso mtools \
-busybox \
+busybox-static \
 thunar \
 dialect \
 acl \
-python3-pip
+python3-pip \
+ntpsec
 
 #transmission-gtk \
 
@@ -242,8 +249,7 @@ live-task-base \
 xfce4-panel \
 xfce4-pulseaudio-plugin \
 xfce4-whiskermenu-plugin \
-xfce4-power-manager \
-xfce4-power-manager-plugins \
+cbatticon \
 xfce4-session \
 console-setup-mini \
 pciutils \
@@ -309,9 +315,9 @@ firmware-zd1211 \
 intel-microcode \
 tzdata
 
-#for dooble
-apt-get -m -y install --no-install-recommends \
-libqt5webenginewidgets5 libqt5charts5
+###for dooble
+##apt-get -m -y install --no-install-recommends \
+##libqt5webenginewidgets5 libqt5charts5 libqt5sql5t64 libqt5sql5-sqlite
 
 echo "TYPE PASSWORD FOR: root"
 passwd root
@@ -378,10 +384,10 @@ chown -R user:user /home/user
 wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/bin/yt-dlp
 chmod a+rx /usr/bin/yt-dlp
 
-#make dooble the default browser
-update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/Dooble-normal.sh 501
-update-alternatives --config x-www-browser
-xdg-mime default Dooble-normal.desktop text/html
+###make dooble the default browser
+##update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/Dooble-normal.sh 501
+##update-alternatives --config x-www-browser
+##xdg-mime default Dooble-normal.desktop text/html
 
 apt-get clean
 

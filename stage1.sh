@@ -44,14 +44,14 @@ sudo chroot "${thepwd}/mountpoint" /workdir/stage2.sh "${THEARCH}"
 sudo chroot "${thepwd}/mountpoint" chown user:user "/workdir"
 sudo cp -a "${thepwd}/myBuildsBuild" "${thepwd}/mountpoint/workdir"
 sudo cp -a "${thepwd}/helpers" "${thepwd}/mountpoint/workdir"
-sudo cp -a "${thepwd}/getEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
-sudo cp -a "${thepwd}/installEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
-sudo chmod +x "${thepwd}/mountpoint/workdir/getEquiptmentBuild.sh"
-sudo chmod +x "${thepwd}/mountpoint/workdir/installEquiptmentBuild.sh"
+#sudo cp -a "${thepwd}/getEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
+#sudo cp -a "${thepwd}/installEquiptmentBuild.sh" "${thepwd}/mountpoint/workdir"
+#sudo chmod +x "${thepwd}/mountpoint/workdir/getEquiptmentBuild.sh"
+#sudo chmod +x "${thepwd}/mountpoint/workdir/installEquiptmentBuild.sh"
 
 #run build scripts in the outer rootfs
-sudo chroot --userspec=user:user ${thepwd}/mountpoint /workdir/getEquiptmentBuild.sh /workdir
-sudo chroot ${thepwd}/mountpoint /workdir/installEquiptmentBuild.sh /workdir
+#sudo chroot --userspec=user:user ${thepwd}/mountpoint /workdir/getEquiptmentBuild.sh /workdir
+#sudo chroot ${thepwd}/mountpoint /workdir/installEquiptmentBuild.sh /workdir
 
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/workdir"
 
@@ -114,7 +114,7 @@ sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/Desktop"
 sudo mkdir -p "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
 sudo chmod 755 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config"
 sudo cp -a ${thepwd}/config/xfce4 "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
-sudo cp -a "${thepwd}/config/spacefm" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
+##sudo cp -a "${thepwd}/config/spacefm" "${thepwd}/mountpoint/workdir/rootfs/home/user/.config/"
 sudo cp -a ${thepwd}/.xinitrc "${thepwd}/mountpoint/workdir/rootfs/home/user/"
 sudo cp -a ${thepwd}/.profile "${thepwd}/mountpoint/workdir/rootfs/home/user/"
 sudo chmod 700 "${thepwd}/mountpoint/workdir/rootfs/home/user/.xinitrc"
@@ -188,6 +188,8 @@ cd "${thepwd}"
 sudo cp stage4.sh "${thepwd}/mountpoint/workdir/"
 sudo cp initOverlay.sh "${thepwd}/mountpoint/workdir/"
 sudo cp installToHDD.sh "${thepwd}/mountpoint/workdir/"
+sudo cp resetInstallation.sh "${thepwd}/mountpoint/workdir/"
+sudo cp swapout_rootfs.sh "${thepwd}/mountpoint/workdir/"
 sudo chmod +x "${thepwd}/mountpoint/workdir/stage4.sh"
 
 sudo chroot "${thepwd}/mountpoint" /workdir/stage4.sh "${THEARCH}"

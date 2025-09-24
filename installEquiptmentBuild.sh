@@ -38,4 +38,4 @@ export PREFIX='/usr' #the location to install to
 export DISPLAY=:0.0
 export LIBGL_ALWAYS_SOFTWARE=1
 
-"${myBuildsDir}/dooble/dooble.myBuild" install
+#"${myBuildsDir}/dooble/dooble.myBuild" install

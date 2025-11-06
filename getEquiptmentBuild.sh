@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OLD_UMASK="$(umask)"
+umask 0022
+
 #myBuild options
 
 #environment variables
@@ -56,3 +59,5 @@ export PREFIX='/usr' #the location to install to
 #"${myBuildsDir}/dooble/dooble.myBuild" get
 #"${myBuildsDir}/dooble/dooble.myBuild" extract
 #"${myBuildsDir}/dooble/dooble.myBuild" build
+
+umask "${OLD_UMASK}"

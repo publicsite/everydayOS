@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OLD_UMASK="$(umask)"
+umask 0022
+
 #SECTION: TIMEZONE ...
 
 printRegions(){
@@ -248,3 +251,5 @@ set_timezone "${dest}"
 sudo umount /mnt/tempmount
 
 echo "All done!"
+
+umask "${OLD_UMASK}"

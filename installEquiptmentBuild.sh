@@ -1,4 +1,8 @@
 #!/bin/sh
+
+OLD_UMASK="$(umask)"
+umask 0022
+
 #myBuild options
 
 #environment variables
@@ -39,3 +43,5 @@ export DISPLAY=:0.0
 export LIBGL_ALWAYS_SOFTWARE=1
 
 #"${myBuildsDir}/dooble/dooble.myBuild" install
+
+umask "${OLD_UMASK}"

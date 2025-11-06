@@ -1,6 +1,9 @@
 #!/bin/sh
 #stage1 :- downloads a iso and extracts the root filesystem, then runs the later stages.
 
+OLD_UMASK="$(umask)"
+umask 0022
+
 if [ "$1" = "" ]; then
 	echo "Argv1: <arch>"
 	echo "eg. \"i386\""
@@ -193,3 +196,6 @@ sudo cp swapout_rootfs.sh "${thepwd}/mountpoint/workdir/"
 sudo chmod +x "${thepwd}/mountpoint/workdir/stage4.sh"
 
 sudo chroot "${thepwd}/mountpoint" /workdir/stage4.sh "${THEARCH}"
+
+umask "${OLD_UMASK}"
+

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OLD_UMASK="$(umask)"
+umask 0022
+
 if [ ! -d "$1" ]; then
 echo "Argv1: rootfs to overwrite, eg. /"
 exit
@@ -109,3 +112,5 @@ sudo umount chrootdir/rootfstocopy
 
 echo "Cleaning up ..."
 rm -rf chrootdir
+
+umask "${OLD_UMASK}"

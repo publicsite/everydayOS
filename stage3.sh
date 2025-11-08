@@ -387,6 +387,9 @@ chown -R user:user /home/user
 wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/bin/yt-dlp
 chmod a+rx /usr/bin/yt-dlp
 
+sudo chmod 750 /etc/sudoers.d
+sudo chmod 0440 /etc/sudoers
+
 ###make dooble the default browser
 ##update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/Dooble-normal.sh 501
 ##update-alternatives --config x-www-browser

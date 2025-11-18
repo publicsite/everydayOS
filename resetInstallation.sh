@@ -164,7 +164,7 @@ while true; do
 	else
 		if [ "$(check_for_layout "${1}" "${option8}" "! layout")" = "found" ]; then
 			printf "Setting layout to %s.\n\n" "${option8}"
-			sed -i "s/XKBLAYOUT=*/XKBLAYOUT=\"${option8}\"/g" "${1}/etc/default/keyboard"
+			sed -i "s/XKBLAYOUT=".*"$/XKBLAYOUT=\"${option8}\"/g" "${1}/etc/default/keyboard"
 			break
 		fi
 	fi

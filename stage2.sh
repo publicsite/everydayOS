@@ -43,6 +43,15 @@ mkdir "${PWD}/rootfs"
 
 apt-get update
 
+#we need to get the latest devuan keys!
+apt-get install devuan-keyring
+mkdir -p /root/.gnupg
+gpg --no-default-keyring --keyring /tmp/keyring.gpg --keyserver hkp://pgp.rediris.es --recv-key EFA95D7591EA95A5A417945F010291FF0AECE9B9 && gpg --no-default-keyring --keyring /tmp/keyring.gpg --output /tmp/devuan-additional-excalibur-key.gpg --export
+cp -a /tmp/devuan-additional-excalibur-key.gpg /etc/apt/trusted.gpg.d/devuan-additional-excalibur-key.gpg
+chown root /etc/apt/trusted.gpg.d/devuan-additional-excalibur-key.gpg
+chmod 0644 /etc/apt/trusted.gpg.d/devuan-additional-excalibur-key.gpg
+apt-get update
+
 apt-get install -m -y debootstrap
 
 #for u-boot

@@ -645,6 +645,13 @@ choose_layout "${dest}"
 #set_locale "${dest}"
 set_timezone "${dest}"
 
+#create fstab
+theuuid="$(findmnt -o UUID tempmount)"
+if [ ! -d "tempmount/etc" ]; then
+mkdir "tempmount/etc"
+chmod 0755 "tempmount/etc"
+fi
+printf "UUID=%s\t/\text4\trw,relatime\t0\t0" "$theuuid" > tempmount/etc/fstab
 
 howManyGLeft="$(df -h "$dest" | head -n 2 | tail -n 1 | tr -s " " | cut -d " " -f 4)"
 if [ "$(printf "%s" "$howManyGLeft" | grep "G")" != "" ]; then
@@ -672,7 +679,7 @@ while true; do
 						chmod 600 "${dest}/swapfile"
 						${thechroot} ${dest} /sbin/mkswap /swapfile
 						#NOTE TO SELF: =========== make sure we check the fstab before completely over-writing it
-						printf "/swapfile none swap sw 0 0\n" > "${dest}/etc/fstab"
+						printf "/swapfile\tnoneswap\tsw\t0\t0\n" >> "${dest}/etc/fstab"
 						printf "The swap will be there at boot\n"
 						break
 					fi
@@ -690,6 +697,10 @@ fi
 
 #make it so files in home are only modified, read, executed by user.
 find tempmount/home/* -exec chmod go-wrx {} \;
+
+#set permissions on fstab
+chmod 0644 tempmount/etc/fstab
+sudo chown root:root tempmount/etc/fstab
 
 umount tempmount
 

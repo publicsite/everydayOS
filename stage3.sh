@@ -217,7 +217,7 @@ alsa-utils \
 va-driver-all openbox \
 obconf \
 pulseaudio \
-xdm \
+lightdm \
 blueman \
 qalculate-gtk \
 xfburn \
@@ -241,7 +241,9 @@ thunar \
 dialect \
 acl \
 python3-pip \
-ntpsec
+ntpsec \
+mirage \
+mpv
 
 #transmission-gtk \
 
@@ -252,7 +254,8 @@ live-task-base \
 xfce4-panel \
 xfce4-pulseaudio-plugin \
 xfce4-whiskermenu-plugin \
-cbatticon \
+xfce-polkit \
+xfce4-power-manager xfce4-power-manager-data xfce4-power-manager-plugins \
 xfce4-session \
 console-setup-mini \
 pciutils \
